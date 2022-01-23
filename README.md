@@ -154,7 +154,7 @@ greenBankBankomat.removeClient() // true
 ```
 
 **![](https://lh5.googleusercontent.com/YbvJW1jBcwtaa9IFUwp8aE6s-OaZbm1dGiSpoDc2H5KjDzAvCzRbQLkvwXyzyIR3vlZ4aCcdVlAuzVquJCpnkRmsXaGv0h35pV1N1ssUX2qrPwSTzWNuXSIXqCUO2EqJvgUqAiH2)**
-Не пугайтесь, задача только выглядит большой 😁
+Не пугайтесь, задача только выглядит большой 😁 <br/>
 Вы обязательно справитесь!
 
 ### Полезные ссылки:
