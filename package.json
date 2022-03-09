@@ -1,0 +1,16 @@
+{
+  "name": "js-3",
+  "version": "1.0.0",
+  "description": "js-3 super task",
+  "main": "index.js",
+  "repository": "https://github.com/PCR-JS-2022/JS-3.git",
+  "author": "pcr-js team",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "mocha": "^9.2.1"
+  }
+}
