@@ -1,4 +1,4 @@
-const { createClient, createBank, createBankomat } = require("./index");
+const { createClient, createBank, createBankomat } = require("../index");
 const assert = require("assert");
 
 describe("createClient", () => {

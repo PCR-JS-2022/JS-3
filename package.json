@@ -10,7 +10,7 @@
   "author": "pcr-js team",
   "license": "MIT",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha ./__tests__/test.js"
   },
   "devDependencies": {
     "assert": "^2.0.0",
