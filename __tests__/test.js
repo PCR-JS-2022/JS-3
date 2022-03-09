@@ -57,7 +57,7 @@ describe("createBank", () => {
 
 describe("createBankomat", () => {
   it("должна корректно обрабатывать валидные данные", async () => {
-    const clients = Array.from((_, index) =>
+    const clients = Array.from({ length: 10 }, (_, index) =>
       createClient(`name ${index}`, 100 + index)
     );
     const bank = createBank("Bibici", clients);
