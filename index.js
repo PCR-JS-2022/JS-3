@@ -59,10 +59,8 @@ function createClient(name, balance = 0) {
     if(!checkObject.checkClientName(name) || !checkObject.checkBalance(balance))
         throw new UserException('Введите корректные данные');
         
-    return Client = {
-        name: name,
-        balance: balance
-        };
+    return {name, balance}
+        
 };
 
 /**
@@ -73,14 +71,14 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
     if (!checkBankName(bankName) && !checkClientObject(clients))
         throw new UserException('Входные данные не корректны');
     
-    return Bank = {
-        bankName: bankName,
-        clients: [],
-        addClient: function (client) {
+    return {
+        bankName,
+        clients,
+        addClient: client => {
             if (!checkClientObject(client) || this.clients.some(client))
             throw new UserException('Не удалось добавить клиента');
                 
@@ -88,13 +86,14 @@ function createBank(bankName, clients) {
             return true;
         },
     
-        removeClient: function (client) {
+        removeClient: client => {
             if (!checkClientObject(client) || !this.clients.some(client))
                 throw new UserException('Не удалось удалить клиента');
                     
             this.clients = this.clients.filter(!client)
             return true;
         }
+    };
 };
 
 /**
