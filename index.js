@@ -73,7 +73,29 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 
-function createBank(bankName, clients) {};
+function createBank(bankName, clients) {
+    if (!checkBankName(bankName) && !checkClientObject(clients))
+        throw new UserException('Входные данные не корректны');
+    
+    return Bank = {
+        bankName: bankName,
+        clients: [],
+        addClient: function (client) {
+            if (!checkClientObject(client) || this.clients.some(client))
+            throw new UserException('Не удалось добавить клиента');
+                
+            this.clients.push(client)
+            return true;
+        },
+    
+        removeClient: function (client) {
+            if (!checkClientObject(client) || !this.clients.some(client))
+                throw new UserException('Не удалось удалить клиента');
+                    
+            this.clients = this.clients.filter(!client)
+            return true;
+        }
+};
 
 /**
  * @name createBankomat
