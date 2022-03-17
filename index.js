@@ -64,7 +64,7 @@ function createBank(bankName, clients) {
 		},
 
 		removeClient: function (client) {
-			if (!this.clients.some(bankClient => bankClient === client))
+			if (!isClient(client) || !this.clients.some(bankClient => bankClient === client))
 				throw new Error('Не удалось удалить клиента из банка')
 
 			this.clients = this.clients.filter(bankClient => bankClient !== client)
