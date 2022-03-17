@@ -56,7 +56,7 @@ function createBank(bankName, clients) {
 		clients,
 
 		addClient: function (client) {
-			if (this.clients.some(bankClient => bankClient === client))
+			if (!isClient(client) || this.clients.some(bankClient => bankClient === client))
 				throw new Error('Не удалось добавить клиента в банк')
 
 			this.clients.push(client)
@@ -171,6 +171,12 @@ function isBank(bank) {
 		bank.clients &&
 		bank.addClient &&
 		bank.removeClient
+}
+
+function isClient(client) {
+	return typeof client === 'object' &&
+		((client.balance && typeof client.balance === 'number') || client.balance === 0) &&
+		client.name && typeof client.name === 'string'
 }
 
 const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10]
