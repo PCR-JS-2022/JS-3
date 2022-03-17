@@ -34,9 +34,30 @@
  * @returns {Client} Объект клиента
  */
 
+function checkObject(anyObject){
+
+    function checkClientName(name){
+        return typeof(name) === String && name.length > 0;
+    };
+
+    function checkBalance(balance){
+        return typeof(balance) === Number && client.balance >= 0;
+    };
+
+    function checkBankName(bankName){
+        return typeof(bankName) === String && bankName.length !== 0;
+    };
+
+    function checkClientObject(client){
+        return typeof(client) === Object && Object.keys(client) === [ 'name', 'balance' ] &&
+        checkClient(this.name) && checkBalance(this.balance);
+    };
+};    
+
+
 function createClient(name, balance = 0) {
-    if(typeof(name) !== String && name.length == 0  && typeof(balance) !== Number)
-        throw new Error('Не удалось создать клиента')
+    if(!checkObject.checkClientName(name) || !checkObject.checkBalance(balance))
+        throw new UserException('Введите корректные данные');
         
     return Client = {
         name: name,
@@ -52,7 +73,7 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 
-function createBank(bankName, clients) {}
+function createBank(bankName, clients) {};
 
 /**
  * @name createBankomat
