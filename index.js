@@ -122,8 +122,8 @@ function createBankomat(bankNotesRepository, bank) {
       return true;
     },
 
-    removeClient: function() {
-      if (!this.currentClient) {
+    removeClient: function(client) {
+      if (!this.currentClient || this.currentClient !== client) {
         throw new Error();
       }
       this.currentClient = undefined;
