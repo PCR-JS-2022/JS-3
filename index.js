@@ -33,7 +33,16 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+
+function createClient(name, balance = 0) {
+    if(typeof(name) !== String && name.length == 0  && typeof(balance) !== Number)
+        throw new Error('Не удалось создать клиента')
+        
+    return Client = {
+        name: name,
+        balance: balance
+        };
+};
 
 /**
  * @name createBank
@@ -42,6 +51,7 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
+
 function createBank(bankName, clients) {}
 
 /**
