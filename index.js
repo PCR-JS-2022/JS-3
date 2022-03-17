@@ -33,16 +33,42 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+function createClient(name, balance) {
+    if (typeof name !== 'string' || typeof balance !== 'number') {
+        throw new Error();
+    }
+    return {
+        name: name,
+        balance: balance || 0
+    }
+}
 
 /**
  * @name createBank
  * @description Функция для создания банка
- * @param {bankName} name Имя банка
+ * @param {bankName} bankName Имя банка
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+function createBank(bankName, clients) {
+    if (typeof bankName !== 'string' || !clients instanceof Array) {
+        throw new Error();
+    }
+    return {
+        bankName: bankName,
+        clients: clients || [],
+        addClient(person) {
+            if (!person instanceof Client || clients.includes(person)) throw new Error();
+            this.clients.push(person);
+            return true;
+        },
+        removeClient(person) {
+            if (!person instanceof Client || !clients.includes(person)) throw new Error();
+            this.clients = this.clients.filter(client => client !== person);
+            return true;
+        }
+    }
+}
 
 /**
  * @name createBankomat
@@ -51,6 +77,28 @@ function createBank(bankName, clients) {}
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {}
+function createBankomat(bankNotesRepository, bank) {
+    return {
+        bank: bank,
+        notesRepository: bankNotesRepository,
+        currentClient: undefined,
+        setClient(person) {
+            if (!bank.clients.includes(person) || this.currentClient) throw new Error();
+            this.currentClient = person;
+            return true
+        },
+        removeClient(person) {
+            if (this.currentClient !== person || !this.currentClient) throw new Error();
+            this.currentClient = undefined;
+            return true;
+        },
+        addMoney(banknotes) {
 
-module.exports = { createClient, createBank, createBankomat };
+        },
+        giveMoney(banknotes) {
+
+        }
+    }
+}
+
+module.exports = {createClient, createBank, createBankomat};
