@@ -63,20 +63,20 @@ function createBank(bankName, clients = []) {
     bankName,
     clients,
 
-    addClient: client => {
-      if (!isValideClient(client) || clients.includes(client)) {
+    addClient: function(client) {
+      if (!isValideClient(client) || this.clients.includes(client)) {
         throw new Error();
       }
-      clients.push(client);
+      this.clients = this.clients.concat(client);
       return true;
     },
 
-    removeClient: client => {
-      const clientIndex = clients.indexOf(client);
-      if (clientIndex === -1) {
+    removeClient: function(client) {
+      const clientIndex = this.clients.indexOf(client);
+      if (!isValideClient(client) || clientIndex === -1) {
         throw new Error();
       }
-      clients.splice(clientIndex, 1);
+      this.clients = this.clients.filter((_, index) => index !== clientIndex);
       return true;
     },
   };
