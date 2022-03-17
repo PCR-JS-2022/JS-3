@@ -73,7 +73,7 @@ function createBank(bankName, clients = []) {
 
     removeClient: client => {
       const clientIndex = clients.indexOf(client);
-      if (!clientIndex) {
+      if (clientIndex === -1) {
         throw new Error();
       }
       clients.splice(clientIndex, 1);
@@ -122,8 +122,8 @@ function createBankomat(bankNotesRepository, bank) {
       return true;
     },
 
-    removeClient: function(client) {
-      if (!this.currentClient || this.currentClient !== client) {
+    removeClient: function() {
+      if (!this.currentClient) {
         throw new Error();
       }
       this.currentClient = undefined;
