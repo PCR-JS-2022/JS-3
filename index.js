@@ -213,7 +213,7 @@ const notesRepository = {
     200: 0,
     100: 0,
     50: 2,
-    10: 300,
+    10: 3000,
 };
 
 const clients = [
