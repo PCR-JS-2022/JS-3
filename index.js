@@ -34,14 +34,6 @@
  * @returns {Client} Объект клиента
  */
 
-function findClientIndex(clients, client) {
-    return clients.findIndex(e => e.name == client.name &&
-        e.balance == client.balance &&
-        typeof client.name == "string" &&
-        typeof client.balance == "number");
-}
-
-
 function createClient(name, balance = 0) {
     if (typeof name !== "string" || typeof balance !== "number") {
         throw new Error();
@@ -64,7 +56,7 @@ function createClient(name, balance = 0) {
 
 
 function createBank(bankName, clients = []) {
-    if (typeof bankName !== "string" || !Array.isArray(clients)) {
+    if (typeof bankName !== "string" || !Array.isArray(clients) || !bankName) {
         throw new Error();
     }
 
@@ -73,14 +65,11 @@ function createBank(bankName, clients = []) {
         clients,
 
         addClient(client) {
-            const checkClient = findClientIndex(this.clients, client);
+            if (checkClient(client) || findClientIndex(this.clients, client) !== -1)
+                throw new Error();
 
-            if (checkClient == -1) {
-                this.clients.push(client);
-                return true;
-            }
-
-            throw new Error();
+            this.clients.push(client);
+            return true;
         },
 
         removeClient(client) {
@@ -97,6 +86,16 @@ function createBank(bankName, clients = []) {
     return bank;
 }
 
+function findClientIndex(clients, client) {
+    return clients.findIndex(e => e.name == client.name && e.balance == client.balance && typeof client === "object" &&
+        client.balance && typeof client.name === "string" && client.balance && typeof client.balance === "number");
+}
+
+function checkClient(client) {
+    return typeof client !== "object" ||
+        (!client.balance || typeof client.balance !== "number" ||
+            !client.name || typeof client.name !== "string")
+}
 
 /**
  * @name createBankomat
@@ -108,7 +107,8 @@ function createBank(bankName, clients = []) {
 
 
 function createBankomat(bankNotesRepository, bank) {
-    if (typeof bank !== "object" || typeof bankNotesRepository !== "object")
+
+    if (!CheckBank(bank) || typeof bankNotesRepository !== "object")
         throw new Error();
 
     const bankomat = {
@@ -136,7 +136,7 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         addMoney(...cashes) {
-            if (!this.currentClient)
+            if (!this.currentClient || !cashes.length)
                 throw new Error();
 
             for (const cash of cashes) {
@@ -149,9 +149,10 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         giveMoney(count) {
-            if (!this.currentClient || this.currentClient.balance < count || count % 10 !== 0) {
+
+            if (typeof count !== 'number' || !this.currentClient ||
+                count > this.currentClient.balance || count % 10 !== 0)
                 throw new Error();
-            }
 
             const cash = count;
             let sum = 0;
@@ -198,52 +199,10 @@ function createBankomat(bankNotesRepository, bank) {
     return bankomat;
 }
 
+function CheckBank(bank) {
+    return typeof bank === "object" && typeof bank.bankName === "string" &&
+        Array.isArray(bank.clients) && typeof bank.addClient === "function" &&
+        typeof bank.removeClient === "function"
+}
 
 module.exports = { createClient, createBank, createBankomat };
-
-// const notesRepository = {
-//     5000: 1,
-//     2000: 3,
-//     1000: 2,
-//     500: 0,
-//     200: 1,
-//     100: 0,
-//     50: 10,
-//     10: 13,
-// };
-
-// const clients = [
-//     { name: 'чел', balance: 1488 },
-//     { name: 'name 0', balance: 100 },
-//     { name: 'name 1', balance: 101 },
-//     { name: 'name 2', balance: 102 },
-//     { name: 'name 3', balance: 103 },
-//     { name: 'name 4', balance: 104 },
-//     { name: 'name 5', balance: 105 },
-//     { name: 'name 6', balance: 106 },
-//     { name: 'name 7', balance: 107 },
-//     { name: 'name 8', balance: 108 },
-//     { name: 'name 9', balance: 109 },
-//     { name: 'кент', balance: 2500000 },
-// ]
-// const bank = createBank("Bibici", clients);
-// const crtBank = createBankomat(notesRepository, bank);
-// crtBank.setClient(createClient("кент", 2500000));
-// //console.log(crtBank.addMoney({ 10: 2 }));
-// // console.log(crtBank.addMoney({ 10: 2 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 }));
-// console.log(crtBank);
-// console.log(crtBank.giveMoney(12670)); 
-// // console.log(crtBank);
-// // console.log(crtBank);
-// // console.log(bank.removeClient());
-// // console.log(crtBank);
-// // console.log(createClient("1212", 1450))
-// // console.log(createBank(bnk, cl))
-// // const cl1 = createClient("чел", 1487);
-// // const cl2 = createClient("чел", 1488);
-// // const crtBank = createBank("Bibici", clients);
-// // console.log(crtBank);
-// // console.log(crtBank.addClient(cl1));
-// // console.log(crtBank);
-// // console.log(crtBank.removeClient(cl2));
-// // console.log(crtBank);
