@@ -42,7 +42,7 @@ function findClientIndex(clients, client) {
 }
 
 
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
     if (typeof name !== "string" || typeof balance !== "number") {
         throw new Error();
     }
@@ -63,7 +63,7 @@ function createClient(name, balance) {
  */
 
 
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
     if (typeof bankName !== "string" || !Array.isArray(clients)) {
         throw new Error();
     }
