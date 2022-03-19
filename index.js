@@ -33,7 +33,7 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error('невалидные аргументы');
     }
@@ -47,14 +47,14 @@ function createClient(name, balance) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
     if (typeof bankName !== 'string' || !Array.isArray(clients)) {
         throw new Error('невалидные аргументы');
     }
 
     return {
         bankName,
-        clients: clients || [],
+        clients: clients,
         addClient(client) {
             if (!client || this.clients.some(c => c.name === client.name && c.balance === client.balance)) {
                 throw new Error('Клиент уже добавлен либо не передан аргумент');
@@ -89,9 +89,13 @@ function createBankomat(bankNotesRepository, bank) {
     }
 
     if (!bank.hasOwnProperty('bankName')
+        || typeof bank !== "object"
         || !bank.hasOwnProperty('clients')
         || !bank.hasOwnProperty('addClient')
         || !bank.hasOwnProperty('removeClient')
+        || typeof bank.addClient !== "function" 
+        || typeof bank.removeClient !== "function"
+        || typeof bank.bankName !== "string" 
         || !Array.isArray(bank.clients)
     ) {
         throw new Error('невалидные аргументы');
@@ -212,6 +216,10 @@ function createBankomat(bankNotesRepository, bank) {
             }, {});
 
             this.currentClient.balance -= sumTogive;
+
+            if (sum !== 0) {
+                throw new Error('Недостаточно денег для выдачи');
+            }
 
             return result;
         }
