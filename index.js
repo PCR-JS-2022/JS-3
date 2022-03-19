@@ -48,11 +48,7 @@ function createClient(name, balance) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients) {
-    if (!bankName || typeof bankName !== 'string') {
-        throw new Error('невалидные аргументы');
-    }
-
-    if (clients && !Array.isArray(clients) && (!clients.hasOwnProperty('name') || clients.hasOwnProperty('balance'))) {
+    if (typeof bankName !== 'string' || !Array.isArray(clients)) {
         throw new Error('невалидные аргументы');
     }
 
@@ -88,7 +84,16 @@ function createBank(bankName, clients) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
-    if (!bank.hasOwnProperty('bankName') || !bank.hasOwnProperty('clients') || !bank.hasOwnProperty('addClient') || !bank.hasOwnProperty('removeClient')) {
+    if (typeof bankNotesRepository !== 'object' || typeof bank !== 'object') {
+        throw new Error('невалидные аргументы');
+    }
+
+    if (!bank.hasOwnProperty('bankName')
+        || !bank.hasOwnProperty('clients')
+        || !bank.hasOwnProperty('addClient')
+        || !bank.hasOwnProperty('removeClient')
+        || !Array.isArray(bank.clients)
+    ) {
         throw new Error('невалидные аргументы');
     }
 
