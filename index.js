@@ -158,7 +158,7 @@ function createBankomat(bankNotesRepository, bank) {
                 this.currentClient.balance += parseInt(Object.keys(notesRepository)) * parseInt(Object.values(notesRepository));
             }
 
-            func = (...b) => {
+            function func(...b) {
                 b = combineObject(b);
                 //увеличиваем хранилище
                 this.notesRepository = combineObject(
