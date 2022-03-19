@@ -159,7 +159,7 @@ function createBankomat(bankNotesRepository, bank) {
             const arrNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
 
             arrNotes.forEach(([banknote, banknoteCount], i) => {
-                if (banknoteCount !== 0 && count >= banknote && banknoteCount * banknote > count) {
+                if (count > 0 && banknoteCount !== 0 && count >= banknote && banknoteCount * banknote > count) {
 
                     const toFloor = Math.floor(count / banknote);
                     (result[banknote]) ? result[banknote] += toFloor: result[banknote] = toFloor;
@@ -167,7 +167,7 @@ function createBankomat(bankNotesRepository, bank) {
 
                     count -= banknote * toFloor;
 
-                } else if (banknoteCount !== 0 && count >= banknote) {
+                } else if (count > 0 && banknoteCount !== 0 && count >= banknote) {
 
                     (result[banknote]) ? result[banknote] += banknoteCount: result[banknote] = banknoteCount;
                     arrNotes[i] = [banknote, 0];
