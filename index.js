@@ -107,7 +107,7 @@ function createBankomat(bankNotesRepository, bank) {
 
     return {
         bank,
-        notesRepository: bankNotesRepository || {},
+        notesRepository: bankNotesRepository,
         currentClient: undefined,
         setClient(client) {
             if (this.currentClient) {
@@ -129,8 +129,8 @@ function createBankomat(bankNotesRepository, bank) {
                 return true;
             }
         },
-        addMoney(...notesRepository) {
-            let currencyObject = {
+        addMoney(...notes) {
+            const currencyObject = {
                 5000: 0,
                 2000: 0,
                 1000: 0,
@@ -142,7 +142,7 @@ function createBankomat(bankNotesRepository, bank) {
             };
 
             //собираем все в один объект
-            let repository = combineObject(notesRepository);
+            const repository = combineObject(notes);
             //увеличиваем хранилище
             this.notesRepository = combineObject(
                 [currencyObject, repository, this.notesRepository]
@@ -158,11 +158,11 @@ function createBankomat(bankNotesRepository, bank) {
                 this.currentClient.balance += parseInt(Object.keys(repository)) * parseInt(Object.values(repository));
             }
 
-            function func(...b) {
-                let moneyObj = combineObject(b);
+            function func(...value) {
+                let moneyObj = combineObject(value);
                 //увеличиваем хранилище
                 this.notesRepository = combineObject(
-                    [currencyObject, b, this.notesRepository]
+                    [currencyObject, value, this.notesRepository]
                 );
 
                 if (Object.keys(moneyObj).length > 1 && Object.values(moneyObj).length > 1) {
@@ -189,6 +189,7 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Клиента нет');
             }
 
+            let sum = sumTogive;
             const money = Object.entries(this.notesRepository).sort((a, b) => {
                 return parseInt(b[0]) - parseInt(a[0]);
             });
@@ -197,7 +198,6 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Денег нет, но вы держитесь');
             }
 
-            let sum = sumTogive;
             const result = money.reduce((acc, curr) => {
                 //если валюта номиналом не больше суммы которую надо выдать
                 //и ее количество не ноль, тогда она может быть рассмотрена
