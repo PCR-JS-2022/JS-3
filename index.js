@@ -58,6 +58,8 @@ function createBank(bankName, clients = []) {
         addClient(client) {
             if (!client || this.clients.some(c => c.name === client.name && c.balance === client.balance)) {
                 throw new Error('Клиент уже добавлен либо не передан аргумент');
+            } else if (typeof client !== 'object' || typeof client.name !== "string" || typeof client.balance !== 'number') {
+                throw new Error("невалидные аргументы");
             } else {
                 this.clients.push(client);
 
@@ -67,8 +69,10 @@ function createBank(bankName, clients = []) {
         removeClient(client) {
             if (!client || !this.clients.some(c => c.name === client.name && c.balance === client.balance)) {
                 throw new Error('Не передан клиент которого надо удалить либо такого клиента нет');
+            } else if (typeof client !== 'object' || typeof client.name !== 'string' || typeof client.balance !== 'number') {
+                throw new Error("невалидные аргументы");
             } else {
-                this.clients = this.clients.filter(c => c.name === client.name && c.balance === client.balance);
+                this.clients = this.clients.filter(c => c.name !== client.name && c.balance !== client.balance);
 
                 return true;
             }
@@ -93,9 +97,9 @@ function createBankomat(bankNotesRepository, bank) {
         || !bank.hasOwnProperty('clients')
         || !bank.hasOwnProperty('addClient')
         || !bank.hasOwnProperty('removeClient')
-        || typeof bank.addClient !== "function" 
+        || typeof bank.addClient !== "function"
         || typeof bank.removeClient !== "function"
-        || typeof bank.bankName !== "string" 
+        || typeof bank.bankName !== "string"
         || !Array.isArray(bank.clients)
     ) {
         throw new Error('невалидные аргументы');
