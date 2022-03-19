@@ -58,12 +58,18 @@ function createBank(bankName, clients = []) {
             if(this.clients.filter(i => i === client).length !== 0) {
                 throw new Error("Этот клиент уже есть");
             }
+            if(typeof client !== "object" || typeof client.name !== "string" || typeof client.balance !== "number") {
+                throw new Error("Невалидные данные");
+            }
             this.clients.push(client);
             return true;
         },
         removeClient(client) {
             if(clients.filter(i => i === client).length === 0) {
                 throw new Error("Такого клиента нет");
+            }
+            if(typeof client !== "object" || typeof client.name !== "string" || typeof client.balance !== "number") {
+                throw new Error("Невалидные данные");
             }
             this.clients = this.clients.filter(i => i !== client);
             return true;
