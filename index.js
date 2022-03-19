@@ -142,37 +142,37 @@ function createBankomat(bankNotesRepository, bank) {
             };
 
             //собираем все в один объект
-            notesRepository = combineObject(notesRepository);
+            let repository = combineObject(notesRepository);
             //увеличиваем хранилище
             this.notesRepository = combineObject(
-                [currencyObject, notesRepository, this.notesRepository]
+                [currencyObject, repository, this.notesRepository]
             );
-            if (Object.keys(notesRepository).length > 1 && Object.values(notesRepository).length > 1) {
-                this.currentClient.balance = Object.keys(notesRepository).reduce((prev, curr, index) => {
-                    this.currentClient.balance += parseInt(curr) * parseInt(Object.values(notesRepository)[index]);
+            if (Object.keys(repository).length > 1 && Object.values(repository).length > 1) {
+                this.currentClient.balance = Object.keys(repository).reduce((prev, curr, index) => {
+                    this.currentClient.balance += parseInt(curr) * parseInt(Object.values(repository)[index]);
 
                     return this.currentClient.balance;
                 }, 0)
             } else {
                 //увеличиваем баланс
-                this.currentClient.balance += parseInt(Object.keys(notesRepository)) * parseInt(Object.values(notesRepository));
+                this.currentClient.balance += parseInt(Object.keys(repository)) * parseInt(Object.values(repository));
             }
 
             function func(...b) {
-                b = combineObject(b);
+                let moneyObj = combineObject(b);
                 //увеличиваем хранилище
                 this.notesRepository = combineObject(
                     [currencyObject, b, this.notesRepository]
                 );
 
-                if (Object.keys(b).length > 1 && Object.values(b).length > 1) {
-                    this.currentClient.balance = Object.keys(b).reduce((prev, curr, index) => {
-                        this.currentClient.balance += parseInt(curr) * parseInt(Object.values(b)[index]);
+                if (Object.keys(moneyObj).length > 1 && Object.values(moneyObj).length > 1) {
+                    this.currentClient.balance = Object.keys(moneyObj).reduce((prev, curr, index) => {
+                        this.currentClient.balance += parseInt(curr) * parseInt(Object.values(moneyObj)[index]);
 
                         return this.currentClient.balance;
                     }, 0)
                 } else {
-                    this.currentClient.balance += parseInt(Object.keys(b)) * parseInt(Object.values(b));
+                    this.currentClient.balance += parseInt(Object.keys(moneyObj)) * parseInt(Object.values(moneyObj));
                 }
 
                 return func;
@@ -181,7 +181,7 @@ function createBankomat(bankNotesRepository, bank) {
             return func;
         },
         giveMoney(sumTogive) {
-            if (this.currentClient.balance < sumTogive) {
+            if (this.currentClient && this.currentClient.balance < sumTogive) {
                 throw new Error('Метод giveMoney не может выдать сумму, которая больше баланса клиента');
             } else if (sumTogive % 10 !== 0) {
                 throw new Error('Метод giveMoney может выдать сумму только кратную 10');
