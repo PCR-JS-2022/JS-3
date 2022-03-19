@@ -33,8 +33,8 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
-    if (typeof name !== 'string' || typeof balance !== 'number') {
+function createClient(name, balance = 0) {
+    if (typeof name !== 'string' || !name || typeof balance !== 'number') {
         throw new Error('Invalid arguments given');
     }
 
