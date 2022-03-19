@@ -105,11 +105,10 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Выберите клиента');
             }
             let sum = 0;
-            for(let i = 0; i < money.length; i ++) { 
-                let currentObj = money[i]; 
-                for(k in currentObj) { 
-                    this.notesRepository[k] += currentObj[k];
-                    sum += k * currentObj[k]; 
+            for(cur of money) { 
+                for(k in cur) { 
+                    this.notesRepository[k] += cur[k];
+                    sum += k * cur[k]; 
                 }
             }
             this.currentClient.balance += sum;
