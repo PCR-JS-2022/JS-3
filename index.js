@@ -151,28 +151,29 @@ function createBankomat(bankNotesRepository, bank) {
         giveMoney(count) {
 
             if (typeof count !== 'number' || !this.currentClient ||
-                count > this.currentClient.balance || count % 10 !== 0)
+                count > this.currentClient.balance || count % 10 !== 0) {
                 throw new Error();
+            }
 
             const result = {};
             const cash = count;
             const arrNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
 
             arrNotes.forEach(([banknote, banknoteCount], i) => {
-                if (count > 0 && banknoteCount !== 0 && count >= banknote && banknoteCount * banknote > count) {
 
-                    const toFloor = Math.floor(count / banknote);
-                    (result[banknote]) ? result[banknote] += toFloor: result[banknote] = toFloor;
-                    arrNotes[i] = [banknote, banknoteCount - toFloor];
+                let integer = Math.floor(count / banknote);
 
-                    count -= banknote * toFloor;
+                if (banknoteCount !== 0 && count >= banknote) {
 
-                } else if (count > 0 && banknoteCount !== 0 && count >= banknote) {
+                    if (banknoteCount * banknote <= count) {
+                        integer = banknoteCount;
+                    }
 
-                    (result[banknote]) ? result[banknote] += banknoteCount: result[banknote] = banknoteCount;
-                    arrNotes[i] = [banknote, 0];
+                    result[banknote] = integer;
+                    arrNotes[i] = [banknote, banknoteCount - integer];
+                    this.notesRepository[banknote] -= integer;
 
-                    count -= banknote * banknoteCount;
+                    count -= banknote * integer;
                 }
             });
 
@@ -184,7 +185,6 @@ function createBankomat(bankNotesRepository, bank) {
             return result;
         }
     }
-
     return bankomat;
 }
 
@@ -193,53 +193,5 @@ function CheckBank(bank) {
         Array.isArray(bank.clients) && typeof bank.addClient === "function" &&
         typeof bank.removeClient === "function"
 }
-
-const notesRepository = {
-    5000: 3,
-    2000: 0,
-    1000: 3,
-    500: 4,
-    200: 7,
-    100: 0,
-    50: 5,
-    10: 5,
-};
-
-const clients = [
-    { name: 'чел', balance: 1488 },
-    { name: 'name 0', balance: 100 },
-    { name: 'name 1', balance: 101 },
-    { name: 'name 2', balance: 102 },
-    { name: 'name 3', balance: 103 },
-    { name: 'name 4', balance: 104 },
-    { name: 'name 5', balance: 105 },
-    { name: 'name 6', balance: 106 },
-    { name: 'name 7', balance: 107 },
-    { name: 'name 8', balance: 108 },
-    { name: 'name 9', balance: 109 },
-    { name: 'кент', balance: 2500000 },
-]
-const bank = createBank("Bibici", clients);
-const crtBank = createBankomat(notesRepository, bank);
-crtBank.setClient(createClient("кент", 2500000));
-// //console.log(crtBank.addMoney({ 10: 2 }));
-// // console.log(crtBank.addMoney({ 10: 2 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 }));
-console.log(crtBank);
-console.log(crtBank.giveMoney(12670));
-// // console.log(crtBank);
-// // console.log(crtBank);
-// // console.log(bank.removeClient());
-// // console.log(crtBank);
-// // console.log(createClient("1212", 1450))
-// // console.log(createBank(bnk, cl))
-// const cl1 = { name: "кентик", balance: 1234 };
-// const cl2 = { name: 14, balance: "1487" };
-// // // const crtBank = createBank("Bibici", clients);
-// console.log(bank.addClient(cl1));
-// console.log(bank);
-// // // console.log(crtBank);
-// console.log(bank.removeClient(cl1));
-// console.log(bank);
-// // console.log(crtBank);
 
 module.exports = { createClient, createBank, createBankomat };
