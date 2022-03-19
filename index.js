@@ -117,12 +117,8 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient = client;
             return true;
         },
-        removeClient: function(client) {
+        removeClient: function() {
             isCurrentClientExists();
-
-            if (!client || client.name !== this.currentClient.name) {
-                throw new Error('Wrong client given');
-            }
 
             this.currentClient = undefined;
             return true;
@@ -174,14 +170,14 @@ function createBankomat(bankNotesRepository, bank) {
                 .filter(note => note[0] <= money)
                 .sort((note1, note2) => note2[0] - note1[0]); //reverse sort
 
-            for (const [note, noteAmount] of sortedNotesRepository) {
-                const maxNoteAmount = Math.floor((money - sum) / note);
-                if (maxNoteAmount <= noteAmount) {
-                    sum+= note * maxNoteAmount;
-                }
-                else {
-                    sum += note * noteAmount;
-                }
+            const banknotesToRemove = {};
+
+            for (const [banknote, banknoteAmount] of sortedNotesRepository) {
+                const maxbanknoteAmount = Math.floor((money - sum) / banknote);
+                const banknoteAmountToGive = Math.min(banknoteAmount, maxbanknoteAmount);
+
+                sum += banknote * banknoteAmountToGive;
+                banknotesToRemove[banknote] = banknoteAmountToGive
 
                 if (sum === money) {
                     break;
@@ -190,6 +186,10 @@ function createBankomat(bankNotesRepository, bank) {
 
             if (sum !== money) {
                 throw new Error(`Not enough money in bankomat to give ${money} money`);
+            }
+
+            for (const banknote in banknotesToRemove) {
+                this.notesRepository[banknote] -= banknotesToRemove[banknote];
             }
 
             this.currentClient.balance -= money;
