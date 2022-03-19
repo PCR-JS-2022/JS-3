@@ -34,7 +34,7 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance) {
-    if (!name || typeof name !== 'string' || typeof balance !== 'number') {
+    if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error('невалидные аргументы');
     }
     return { name, balance };
