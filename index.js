@@ -107,9 +107,9 @@ function createBankomat(bankNotesRepository, bank) {
             let sum = 0;
             for(let i = 0; i < money.length; i ++) { 
                 let currentObj = money[i]; 
-                for(key in currentObj) { 
-                    this.notesRepository[key] += currentObj[key];
-                    sum += key * currentObj[key]; 
+                for(k in currentObj) { 
+                    this.notesRepository[k] += currentObj[k];
+                    sum += k * currentObj[k]; 
                 }
             }
             this.currentClient.balance += sum;
