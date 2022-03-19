@@ -135,94 +135,20 @@ function createBankomat(bankNotesRepository, bank) {
             let banknotes = 0;
             let result = {};
 
-            if(currentSum > 0 && currentSum >= 5000 && this.notesRepository.hasOwnProperty("5000")) {
-                banknotes = Math.floor(currentSum / 5000);
-                if(banknotes > this.notesRepository["5000"]) {
-                    currentSum -= 5000 * this.notesRepository["5000"];
-                    result["5000"] = this.notesRepository["5000"];
-                    this.notesRepository["5000"] = 0;
-                } else {
-                    currentSum -= 5000 * banknotes;
-                    result["5000"] = banknotes;
-                    this.notesRepository["5000"] = this.notesRepository["5000"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 2000 && this.notesRepository.hasOwnProperty("2000")) {
-                banknotes = Math.floor(currentSum / 2000);
-                if(banknotes > this.notesRepository["1000"]) {
-                    currentSum -= 2000 * this.notesRepository["2000"];
-                    result["2000"] = this.notesRepository["2000"];
-                    this.notesRepository["1000"] = 0;
-                } else {
-                    currentSum -= 2000 * banknotes;
-                    result["2000"] = banknotes;
-                    this.notesRepository["2000"] = this.notesRepository["2000"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 1000 && this.notesRepository.hasOwnProperty("1000")) {
-                banknotes = Math.floor(currentSum / 1000);
-                if(banknotes > this.notesRepository["1000"]) {
-                    currentSum -= 1000 * this.notesRepository["1000"];
-                    result["1000"] = this.notesRepository["1000"];
-                    this.notesRepository["1000"] = 0;
-                } else {
-                    currentSum -= 1000 * banknotes;
-                    result["1000"] = banknotes;
-                    this.notesRepository["1000"] = this.notesRepository["1000"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 500 && this.notesRepository.hasOwnProperty("500")) {
-                banknotes = Math.floor(currentSum / 500);
-                if(banknotes > this.notesRepository["500"]) {
-                    currentSum -= 500 * this.notesRepository["500"];
-                    result["500"] = this.notesRepository["500"];
-                    this.notesRepository["500"] = 0;
-                } else {
-                    currentSum -= 500 * banknotes;
-                    result["500"] = banknotes;
-                    this.notesRepository["500"] = this.notesRepository["500"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 100 && this.notesRepository.hasOwnProperty("100")) {
-                banknotes = Math.floor(currentSum / 100);
-                if(banknotes > this.notesRepository["100"]) {
-                    currentSum -= 100 * this.notesRepository["100"];
-                    result["100"] = this.notesRepository["100"];
-                    this.notesRepository["100"] = 0;
-                } else {
-                    currentSum -= 100 * banknotes;
-                    result["100"] = banknotes;
-                    this.notesRepository["100"] = this.notesRepository["100"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 50 && this.notesRepository.hasOwnProperty("50")) {
-                banknotes = Math.floor(currentSum / 50);
-                if(banknotes > this.notesRepository["50"]) {
-                    currentSum -= 50 * this.notesRepository["50"];
-                    result["50"] = this.notesRepository["50"];
-                    this.notesRepository["50"] = 0;
-                } else {
-                    currentSum -= 50 * banknotes;
-                    result["50"] = banknotes;
-                    this.notesRepository["50"] = this.notesRepository["50"] - banknotes;
-                }
-            }
-
-            if(currentSum > 0 && currentSum >= 10 && this.notesRepository.hasOwnProperty("10")) {
-                banknotes = Math.floor(currentSum / 10);
-                if(banknotes > this.notesRepository["10"]) {
-                    currentSum -= 10 * this.notesRepository["10"];
-                    result["10"] = this.notesRepository["10"];
-                    this.notesRepository["10"] = 0;
-                } else {
-                    currentSum -= 10 * banknotes;
-                    result["10"] = banknotes;
-                    this.notesRepository["10"] = this.notesRepository["10"] - banknotes;
+            let sortMoney = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
+            for(let i = 0; i < sortMoney.length; i++) { 
+                let current = sortMoney[i];
+                if(currentSum > 0 && currentSum >= Number(current[0])) {
+                    banknotes = Math.floor(currentSum / Number(current[0]));
+                    if(banknotes > current[1]) {
+                        currentSum -= Number(current[0]) * current[1];
+                        result[current[0]] = current[1];
+                        this.notesRepository[current[0]] = 0;
+                    } else {
+                        currentSum -= Number(current[0]) * banknotes;
+                        result[current[0]] = banknotes;
+                        this.notesRepository[current[0]] = current[1] - banknotes;
+                    }
                 }
             }
 
@@ -267,8 +193,8 @@ const clientVasiliy = createClient('Василий', 2500);
 greenBank.addClient(clientVasiliy);
 greenBankBankomat.setClient(clientVasiliy);
 //console.log(greenBankBankomat.giveMoney(1610));
-greenBankBankomat.giveMoney(1610);
-greenBankBankomat.addMoney({ 10: 2 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 });
+//console.log(greenBankBankomat.giveMoney(1610));
+//greenBankBankomat.addMoney({ 10: 2 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 });
 //console.log(clientVasiliy.balance);
 
 //console.log(greenBank.clients)
