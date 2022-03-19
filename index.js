@@ -154,44 +154,33 @@ function createBankomat(bankNotesRepository, bank) {
                 count > this.currentClient.balance || count % 10 !== 0)
                 throw new Error();
 
-            const cash = count;
-            let sum = 0;
-
-            const arrNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
             const result = {};
+            const cash = count;
+            const arrNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
 
-            for (let i = String(count).length; i > 1; i--) {
-                let e = Math.floor(count / Math.pow(10, i - 1));
-                e = e * Math.pow(10, i - 1);
+            arrNotes.forEach(([banknote, banknoteCount], i) => {
+                if (banknoteCount !== 0 && count >= banknote && banknoteCount * banknote > count) {
 
-                arrNotes.forEach(([banknote, banknoteCount], i) => {
-                    if (banknoteCount !== 0 && e >= banknote && banknoteCount * banknote >= e) {
+                    const toFloor = Math.floor(count / banknote);
+                    (result[banknote]) ? result[banknote] += toFloor: result[banknote] = toFloor;
+                    arrNotes[i] = [banknote, banknoteCount - toFloor];
 
-                        const toFloor = Math.floor(e / banknote);
-                        (result[banknote]) ? result[banknote] += toFloor: result[banknote] = toFloor;
-                        arrNotes[i] = [banknote, banknoteCount - toFloor];
+                    count -= banknote * toFloor;
 
-                        sum += banknote * toFloor;
-                        e -= banknote * toFloor;
+                } else if (banknoteCount !== 0 && count >= banknote) {
 
-                    } else if (banknoteCount !== 0 && e >= banknote) {
+                    (result[banknote]) ? result[banknote] += banknoteCount: result[banknote] = banknoteCount;
+                    arrNotes[i] = [banknote, 0];
 
-                        (result[banknote]) ? result[banknote] += banknoteCount: result[banknote] = banknoteCount;
-                        arrNotes[i] = [banknote, 0];
+                    count -= banknote * banknoteCount;
+                }
+            });
 
-                        sum += banknote * banknoteCount;
-                        e -= banknote * banknoteCount;
-                    }
-                });
-
-                count = count % Math.pow(10, i - 1);
-            }
-
-            if (sum != cash) {
+            if (count != 0) {
                 throw new Error();
             }
 
-            this.currentClient.balance -= sum;
+            this.currentClient.balance -= cash;
             return result;
         }
     }
@@ -206,14 +195,14 @@ function CheckBank(bank) {
 }
 
 const notesRepository = {
-    5000: 1,
-    2000: 3,
-    1000: 2,
-    500: 0,
-    200: 1,
+    5000: 3,
+    2000: 0,
+    1000: 3,
+    500: 4,
+    200: 7,
     100: 0,
-    50: 10,
-    10: 13,
+    50: 5,
+    10: 5,
 };
 
 const clients = [
@@ -243,14 +232,14 @@ console.log(crtBank.giveMoney(12670));
 // // console.log(crtBank);
 // // console.log(createClient("1212", 1450))
 // // console.log(createBank(bnk, cl))
-const cl1 = { name: "кентик", balance: 1234 };
-const cl2 = { name: 14, balance: "1487" };
-// // const crtBank = createBank("Bibici", clients);
-console.log(bank.addClient(cl1));
-console.log(bank);
-// // console.log(crtBank);
-console.log(bank.removeClient(cl1));
-console.log(bank);
+// const cl1 = { name: "кентик", balance: 1234 };
+// const cl2 = { name: 14, balance: "1487" };
+// // // const crtBank = createBank("Bibici", clients);
+// console.log(bank.addClient(cl1));
+// console.log(bank);
+// // // console.log(crtBank);
+// console.log(bank.removeClient(cl1));
+// console.log(bank);
 // // console.log(crtBank);
 
 module.exports = { createClient, createBank, createBankomat };
