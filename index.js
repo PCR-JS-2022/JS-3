@@ -33,8 +33,23 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+function createClient(name, balance) {
+    if (typeof name === 'string' && typeof balance === 'number') {
+        return {
+            name: name,
+            balance: balance
+        };
+    } else {
+        throw new Error('Не удалось создать клиента!');
+    }
 
+}
+
+function isClient(client) {
+    return (typeof client === 'object') &&
+        (client.hasOwnProperty('name') && typeof client.name === 'string') &&
+        (client.hasOwnProperty('balance') && typeof client.balance === 'number');
+}
 /**
  * @name createBank
  * @description Функция для создания банка
@@ -42,7 +57,38 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+function createBank(bankName, clients) {
+    if (typeof bankName === 'string' && Array.isArray(clients)) {
+        return {
+            bankName: bankName,
+            clients: clients,
+            addClient: function (client) {
+                if (isClient(client)) {
+                    const findClient = this.clients.includes(client);
+                    if (!findClient) {
+                        this.clients.push(client);
+                    } else {
+                        throw new Error('Не удалось добавить клиента!');
+                    }
+                }
+            },
+            removeClient: function (client) {
+                if (!isClient(client)) {
+                    throw new Error('Не удалось удалить клиента!');
+                }
+                const findClient = this.clients.includes(client);
+                if (findClient) {
+                    this.clients = this.clients.filter((client) => client !== client);
+                    return true;
+                } else {
+                    throw new Error('Не удалось удалить клиента!');
+                }
+            }
+        };
+    } else {
+        throw new Error('Не удалось создать банк!');
+    }
+}
 
 /**
  * @name createBankomat
@@ -53,4 +99,8 @@ function createBank(bankName, clients) {}
  */
 function createBankomat(bankNotesRepository, bank) {}
 
-module.exports = { createClient, createBank, createBankomat };
+module.exports = {
+    createClient,
+    createBank,
+    createBankomat
+};
