@@ -57,13 +57,13 @@ function createBank(bankName, clients = []) {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClientsObject(this.clients)) 
+            if (!checkClientsObject(clients)) 
                 throw new UserException('Входные данные не корректны');
 
-            if (this.clients.includes(client))
+            if (clients.includes(client))
                 throw new UserException('Такой клиент уже имеется в банке');
 
-            this.clients.push(client) 
+            clients.push(client) 
             return true;
         },
     
