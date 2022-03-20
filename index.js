@@ -33,7 +33,15 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+ function createClient(name, balance = 0) {
+    if (typeof name !== 'string' || typeof balance !== 'number') {
+      throw new Error('Ошибка')
+    }
+    return {
+      name,
+      balance
+    }
+  }
 
 /**
  * @name createBank
@@ -42,7 +50,42 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+ function createBank(bankName, clients = []) {
+    if (typeof bankName !== 'string' || !Array.isArray(clients)) {
+      throw new Error('Ошибка')
+    }
+  
+    return {
+      bankName,
+      clients,
+  
+      addClient: function (client) {
+        if (this.clients.includes(client) || typeof client.name !== 'string' || typeof client.balance !== 'number') {
+          throw new Error('Ошибка');
+        }
+  
+        this.clients.push(client);
+        return true;
+      },
+  
+      removeClient: function (client) {
+        if (typeof client.name !== 'string' || typeof client.balance !== 'number') {
+          throw new Error('Ошибка');
+        }
+  
+        const presentClient = this.clients.indexOf(client);
+        if (presentClient === -1) {
+          throw new Error('Ошибка');
+        }
+  
+        this.clients = this.clients.filter((index) => {
+          console.log(index);
+          return index !== presentClient;
+        });
+        return true;
+      },
+    }
+  }
 
 /**
  * @name createBankomat
