@@ -190,7 +190,7 @@ function createBankomat(bankNotesRepository, bank) {
     };
 
     function checkBalance(balance){
-        return typeof(balance) === Number && client.balance >= 0;
+        return typeof(balance) === 'number' && client.balance >= 0;
     };
 
     function checkBankName(bankName){
