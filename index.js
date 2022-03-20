@@ -35,8 +35,6 @@
  */
 
 function createClient(name, balance = 0) {
-    if(!checkClientName(name) || !checkBalance(balance))
-        throw new UserException('Входные данные не корректны');
         
     return {name, balance};   
 };
