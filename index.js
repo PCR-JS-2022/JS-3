@@ -198,7 +198,7 @@ function createBankomat(bankNotesRepository, bank) {
     };
 
     function checkClientsObject(client){
-        return typeof(client) == 'object' && Object.keys(client) == [ 'name', 'balance' ] &&
+        return typeof(client) == 'object' &&
         checkClient(client.name) && checkBalance(client.balance);;
     };
 
