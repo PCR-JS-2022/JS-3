@@ -74,15 +74,15 @@ function isBankNotesRepository(bankNotesRepository) {
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-    if (typeof name === 'string' && typeof balance === 'number') {
+    if (typeof name !== 'string' || typeof balance !== 'number' || !name) {
+        throw new Error('Не удалось создать клиента!');
+
+    } else {
         return {
             name: name,
             balance: balance
         };
-    } else {
-        throw new Error('Не удалось создать клиента!');
     }
-
 }
 
 /**
@@ -93,37 +93,37 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
-    if (typeof bankName === 'string' && Array.isArray(clients)) {
-        return {
-            bankName: bankName,
-            clients: clients,
-            addClient: function (client) {
-                if (isClient(client)) {
-                    const findClient = this.clients.includes(client);
-                    if (!findClient) {
-                        this.clients.push(client);
-                        return true;
-                    } else {
-                        throw new Error('Не удалось добавить клиента!');
-                    }
-                }
-            },
-            removeClient: function (client) {
-                if (!isClient(client)) {
-                    throw new Error('Не удалось удалить клиента!');
-                }
-                const findClient = this.clients.includes(client);
-                if (findClient) {
-                    this.clients = this.clients.filter((client) => client !== client);
-                    return true;
-                } else {
-                    throw new Error('Не удалось удалить клиента!');
-                }
-            }
-        };
-    } else {
+    if (typeof bankName !== 'string' || !Array.isArray(clients) || !bankName) {
         throw new Error('Не удалось создать банк!');
     }
+    return {
+        bankName: bankName,
+        clients: clients,
+        addClient: function (client) {
+            if (!isClient(client)) {
+                throw new Error('Не удалось добавить клиента!');
+            }
+            const findClient = this.clients.includes(client);
+            if (!findClient) {
+                this.clients.push(client);
+                return true;
+            } else {
+                throw new Error('Не удалось добавить клиента!');
+            }
+        },
+        removeClient: function (client) {
+            if (!isClient(client)) {
+                throw new Error('Не удалось удалить клиента!');
+            }
+            const findClient = this.clients.includes(client);
+            if (findClient) {
+                this.clients = this.clients.filter((client) => client !== client);
+                return true;
+            } else {
+                throw new Error('Не удалось удалить клиента!');
+            }
+        }
+    };
 }
 
 /**
@@ -180,6 +180,9 @@ function createBankomat(bankNotesRepository, bank) {
         giveMoney: function (sumToGive) {
             if (this.currentClient === undefined) {
                 throw new Error("Ошибка: отсутствует клиент!");
+            }
+            if (typeof sumToGive !== number || number(sumToGive) < 0) {
+                throw new Error("Передана невалидная сумма!");
             }
             if (number(sumToGive) > this.currentClient.balance) {
                 throw new Error('На вашем счёте не достаточно денег для снятия!');
