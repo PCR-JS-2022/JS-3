@@ -50,7 +50,7 @@ function createClient(name, balance = 0) {
  */
 
 function createBank(bankName, clients = []) {
-    if (!checkBankName(bankName) && !checkClientObject(clients))
+    if (!checkBankName(bankName) && !checkClientsObject(clients))
         throw new UserException('Входные данные не корректны');
     
     return {
