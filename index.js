@@ -73,7 +73,7 @@ function isBankNotesRepository(bankNotesRepository) {
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
     if (typeof name === 'string' && typeof balance === 'number') {
         return {
             name: name,
@@ -92,7 +92,7 @@ function createClient(name, balance) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
     if (typeof bankName === 'string' && Array.isArray(clients)) {
         return {
             bankName: bankName,
