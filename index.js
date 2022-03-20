@@ -57,7 +57,8 @@ function createBank(bankName, clients = []) {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClientsObject(clients)) 
+            if (!checkClientsObject(clients) && !checkClientName(client.name)&&
+            !checkBalance(client.balance)) 
                 throw new Error('Входные данные не корректны');
 
             if (clients.includes(client))
@@ -198,7 +199,7 @@ function createBankomat(bankNotesRepository, bank) {
     };
 
     function checkClientsObject(client){
-        return typeof(client) == 'object'
+        return typeof(client) == 'object';
     };
 
     function checkBank(bank){
