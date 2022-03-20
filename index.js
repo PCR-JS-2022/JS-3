@@ -35,6 +35,8 @@
  */
 
 function createClient(name, balance = 0) {
+    if(!checkClientName(name) || !checkBalance(balance))
+        throw new UserException('Входные данные не корректны');
         
     return {name, balance};   
 };
@@ -188,7 +190,7 @@ function createBankomat(bankNotesRepository, bank) {
     };
 
     function checkBalance(balance){
-        return typeof(balance) == 'number' && client.balance >= 0;
+        return typeof(balance) == 'number';
     };
 
     function checkBankName(bankName){
