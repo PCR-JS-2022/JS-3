@@ -188,7 +188,7 @@ function createBankomat(bankNotesRepository, bank) {
 
                 if (Object.keys(bankNotesRepository).includes(Object.keys(element))){
                 bankNotesRepository[Object.keys(element)] += Object.values(element);
-                this.currentClient.balance += Object.values(element) * (Object.keys(element);
+                this.currentClient.balance += Object.values(element) * (Object.keys(element))
                 };
             }});
         },
@@ -196,7 +196,7 @@ function createBankomat(bankNotesRepository, bank) {
         giveMoney: (getCash) => {
             if (!client.includes(currentClient))
                 throw new UserException('Вы не являетесь клиентом этого банка');
-                
+
             if (!checkObject.getCash(getCash))
                 throw new UserException('Введите сумму списания кратную 10');
 
