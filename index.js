@@ -6,18 +6,18 @@
  *//*
 const clientVasiliy = createClient('Василий', 2500);
 let bobo = [
-    {
-        name: 'петр',
-        balance: 1488,
-    },
-    {
-        name: 'хуетр',
-        balance: 2500,
-    },
-    {
-        name: 'асетр',
-        balance: 1555,
-    },
+   {
+       name: 'петр',
+       balance: 1488,
+   },
+   {
+       name: 'непетр',
+       balance: 2500,
+   },
+   {
+       name: 'асетр',
+       balance: 1555,
+   },
 
 ]
 const greenBank = createBank('GREENBANK', bobo);*/
@@ -35,7 +35,6 @@ const notesRepository = {
 };
 
 let provero4ka = createBankomat(notesRepository, greenBank);
-let adiin = 1;
 let huet = provero4ka.giveMoney(2000);
 huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }]);
 let adin = 1;*/
@@ -69,10 +68,10 @@ const { throws } = require("assert");
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
-    const biba = new Error('Ошибка ввода "createClient"')
-    if (isNaN(balance) || typeof name != 'string' )
-        throw biba;
+function createClient(name, balance = 0) {
+    const invalidArguments = new Error('Ошибка ввода "createClient"')
+    if (isNaN(balance) || typeof name != 'string'|| !name)
+        throw invalidArguments;
     return {
         name: name,
         balance: balance,
@@ -86,20 +85,20 @@ function createClient(name, balance) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
-    const biba = new Error('Ошибка ввода "createBank"');
-    if (typeof bankName !='string' || !Array.isArray(clients))
-        throw biba;
+function createBank(bankName, clients = []) {
+    const invalidArguments = new Error('Ошибка ввода "createBank"');
+    if (typeof bankName != 'string' || !Array.isArray(clients) || !bankName)
+        throw invalidArguments;
 
     return {
         bankName: bankName,
         clients: clients,
         addClient: function (client) {
-            const boba = new Error('Ошибка ввода "addClient"');
+            const invalidArguments = new Error('Ошибка ввода "addClient"');
             const weAlreadyHaveThisClient = new Error('Такой клиент уже есть 2х нам не надо');
 
             if (client === undefined || typeof client !== "object")
-                throw boba;
+                throw invalidArguments;
             if (!clients.includes(client)) {
                 clients.push(client);
                 return true;
@@ -107,18 +106,18 @@ function createBank(bankName, clients) {
             throw weAlreadyHaveThisClient;
         },
         removeClient: function (client) {
-            const boba = new Error('Ошибка ввода "removeClient"');
-            const WeDontHaveThisClient = new Error('Такой клиент уже есть 2х нам не надо');
-            
+            const invalidArguments = new Error('Ошибка ввода "removeClient"');
+            const weDontHaveThisClient = new Error('Такой клиент уже есть 2х нам не надо');
+
             if (client === undefined || typeof client !== "object")
-                throw boba;
+                throw invalidArguments;
             for (let i = 0; i < clients.length; i++) {
                 if (clients[i] === client) {
                     clients.splice(i, 1);
                     return true;
                 }
             }
-            throw WeDontHaveThisClient;
+            throw weDontHaveThisClient;
         }
     };
 }
@@ -130,11 +129,11 @@ function createBank(bankName, clients) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
-    const biba = new Error('Ошибка ввода "createBankomat"');
-    if (typeof bankNotesRepository !='object')
-        throw biba;
+    const invalidArguments = new Error('Ошибка ввода "createBankomat"');
+    if (typeof bankNotesRepository != 'object')
+        throw invalidArguments;
     let currentClient = undefined;
-    let allbanknotes = {
+    let allBanknotes = {
         1: 5000,
         2: 2000,
         3: 1000,
@@ -150,9 +149,9 @@ function createBankomat(bankNotesRepository, bank) {
         currentClient: currentClient,
         setClient: function (client) {
             const AtmIsBusy = new Error('Ббанкомат занят жди очередь');
-            if(currentClient !== undefined)
+            if (currentClient !== undefined)
                 throw AtmIsBusy;
-            
+
             currentClient = client;
             return true;
         },
@@ -162,30 +161,30 @@ function createBankomat(bankNotesRepository, bank) {
         },
         addMoney: function (moooney) {
             const NoCustomer = new Error('Клиента нет')
-            if (currentClient !== undefined) 
+            if (currentClient !== undefined)
                 throw NoCustomer;
 
             moooney.forEach(moneyobj => {
                 for (let i = 1; i < 9; i++) {
-                    if (!isNaN(moneyobj[allbanknotes[i]]))
-                        notesRepository[allbanknotes[i]] += moneyobj[allbanknotes[i]];
+                    if (!isNaN(moneyobj[allBanknotes[i]]))
+                        notesRepository[allBanknotes[i]] += moneyobj[allBanknotes[i]];
                 }
             });
             return notesRepository;
         },
         giveMoney: function (moooney) {
-            let allMoneyInAtf=0;
-            for (let i = 1; i < 9; i++){
-                allMoneyInAtf += allbanknotes[i]*bankNotesRepository[allbanknotes[i]];
+            let allMoneyInAtf = 0;
+            for (let i = 1; i < 9; i++) {
+                allMoneyInAtf += allBanknotes[i] * bankNotesRepository[allBanknotes[i]];
             }
             const WeNeedMoreMoney = new Error('В банкомате недостаточно средств')
-            if (this.currentClient && this.currentClient.balance < moooney) 
+            if (this.currentClient && this.currentClient.balance < moooney)
                 throw WeNeedMoreMoney;
             const Mod10NotEqualTo0 = new Error('Сумма не кратна 10');
-            if (moooney % 10 !== 0) 
+            if (moooney % 10 !== 0)
                 throw Mod10NotEqualTo0;
             const NoCustomer = new Error('Клиента нет')
-            if (currentClient !== undefined) 
+            if (currentClient !== undefined)
                 throw NoCustomer;
             const noRequiredBanknotes = new Error('В банкомате нет нужных банкнот');
 
@@ -202,20 +201,20 @@ function createBankomat(bankNotesRepository, bank) {
             let isSumMoreThenNominals;
             let isSumMoreThenAllBanknotes;
             for (let i = 1; i < 9; i++) {
-                isSumMoreThenNominals = moooney >= allbanknotes[i];
-                isSumMoreThenAllBanknotes = moooney <= allbanknotes[i] * notesRepository[allbanknotes[i]];
+                isSumMoreThenNominals = moooney >= allBanknotes[i];
+                isSumMoreThenAllBanknotes = moooney <= allBanknotes[i] * notesRepository[allBanknotes[i]];
 
                 if (isSumMoreThenNominals)
                     if (isSumMoreThenAllBanknotes)
-                        banknotes[allbanknotes[i]] = Math.floor(moooney / allbanknotes[i]);
-                    else banknotes[allbanknotes[i]] = notesRepository[allbanknotes[i]];
+                        banknotes[allBanknotes[i]] = Math.floor(moooney / allBanknotes[i]);
+                    else banknotes[allBanknotes[i]] = notesRepository[allBanknotes[i]];
 
-                moooney -= banknotes[allbanknotes[i]] * allbanknotes[i];
+                moooney -= banknotes[allBanknotes[i]] * allBanknotes[i];
             }
             if (moooney != 0)
                 throw noRequiredBanknotes;
-            for (let i = 1; i < 9; i++){
-                notesRepository[allbanknotes[i]] -= banknotes[allbanknotes[i]];
+            for (let i = 1; i < 9; i++) {
+                notesRepository[allBanknotes[i]] -= banknotes[allBanknotes[i]];
             }
             return banknotes;
         }
