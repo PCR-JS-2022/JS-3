@@ -186,7 +186,7 @@ function createBankomat(bankNotesRepository, bank) {
 
 
     function checkClientName(name){
-        return typeof(name) === String && name.length > 0;
+        return typeof(name) === String && length(name) > 0;
     };
 
     function checkBalance(balance){
@@ -194,7 +194,7 @@ function createBankomat(bankNotesRepository, bank) {
     };
 
     function checkBankName(bankName){
-        return typeof(bankName) === String && bankName.length !== 0;
+        return typeof(bankName) === String && length(bankName) !== 0;
     };
 
     function checkClientObject(client){
@@ -223,7 +223,7 @@ function createBankomat(bankNotesRepository, bank) {
     function getTrueMoney(){
         return [5000, 2000, 1000, 500, 200, 100, 50, 10];
     }
-    
+
     function checkGetCash(cash){
         return cash > 0 && typeof(cash) === Number || cash % 10 !== 0;
     };
