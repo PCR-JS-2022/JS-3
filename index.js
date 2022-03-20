@@ -112,16 +112,11 @@ function createBank(bankName, clients = []) {
             }
         },
         removeClient: function (client) {
-            if (!isClient(client)) {
+            if (!isClient(client) || !this.clients.some((clientBank) => clientBank === client)) {
                 throw new Error('Не удалось удалить клиента!');
             }
-            const findClient = this.clients.includes(client);
-            if (findClient) {
-                this.clients = this.clients.filter((client) => client !== client);
-                return true;
-            } else {
-                throw new Error('Не удалось удалить клиента!');
-            }
+            this.clients = this.clients.filter((clientBank) => clientBank !== client);
+            return true;
         }
     };
 }
