@@ -186,7 +186,7 @@ function createBankomat(bankNotesRepository, bank) {
 
 
     function checkClientName(name){
-        return typeof(name) === String && length(name) > 0;
+        return typeof(name) === 'string' && length(name) > 0;
     };
 
     function checkBalance(balance){
