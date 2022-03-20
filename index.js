@@ -186,34 +186,34 @@ function createBankomat(bankNotesRepository, bank) {
 
 
     function checkClientName(name){
-        return typeof(name) === 'string' && name.length > 0;
+        return typeof(name) == 'string' && name.length > 0;
     };
 
     function checkBalance(balance){
-        return typeof(balance) === 'number' && client.balance >= 0;
+        return typeof(balance) == 'number' && client.balance >= 0;
     };
 
     function checkBankName(bankName){
-        return typeof(bankName) === 'string' && bankName.length !== 0;
+        return typeof(bankName) == 'string' && bankName.length !== 0;
     };
 
     function checkClientObject(client){
-        return typeof(client) === 'object' && Object.keys(client) === [ 'name', 'balance' ] &&
+        return typeof(client) == 'object' && Object.keys(client) == [ 'name', 'balance' ] &&
         checkClient(client.name) && checkBalance(client.balance);
     };
 
     function checkBank(bank){
-        return typeof(bank) === 'object' && typeof(Object.entries(bank)) === 'Object';
+        return typeof(bank) == 'object' && typeof(Object.entries(bank)) == 'Object';
     };
 
     function checkBankNotesRepository(bankNotesRepository){
-        return typeof(bankNotesRepository) === 'Object'; 
+        return typeof(bankNotesRepository) == 'Object'; 
     };
 
     function checkAddMoney(addMoney){
         const trueMoney = [5000, 2000, 1000, 500, 200, 100, 50, 10]
 
-        return typeof(addMoney) === 'Object' &&
+        return typeof(addMoney) == 'Object' &&
             addMoney.length > 0 && 
             Object.keys(addMoney).forEach(element => {
                 trueMoney.includes(element)  
@@ -225,7 +225,7 @@ function createBankomat(bankNotesRepository, bank) {
     }
 
     function checkGetCash(cash){
-        return cash > 0 && typeof(cash) === 'Number' || cash % 10 !== 0;
+        return cash > 0 && typeof(cash) == 'Number' || cash % 10 !== 0;
     };
 
     function checkBankomatFulness(){
