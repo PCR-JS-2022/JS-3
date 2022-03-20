@@ -60,7 +60,7 @@ function createBank(bankName, clients = []) {
             if (!checkClientsObject(clients)) 
                 throw new UserException('Входные данные не корректны');
 
-            if (clients.includes(client))
+            if (this.clients.includes(client))
                 throw new UserException('Такой клиент уже имеется в банке');
 
             this.clients.push(client) 
