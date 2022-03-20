@@ -153,7 +153,7 @@ function createBankomat(bankNotesRepository, bank) {
             if(!this.currentClient.balance > getCash)
                 throw new UserException('Недостаточно средств на балансе');
 
-            if(!checkBankomatFulness > getCash)
+            if(!checkBankomatFulness() > getCash)
             throw new UserException('В банкомате не достаточно средств');
 
             this.currentClient.balance -= getCash;
@@ -222,7 +222,8 @@ function createBankomat(bankNotesRepository, bank) {
 
     function getTrueMoney(){
         return [5000, 2000, 1000, 500, 200, 100, 50, 10];
-
+    }
+    
     function checkGetCash(cash){
         return cash > 0 && typeof(cash) === Number || cash % 10 !== 0;
     };
@@ -232,7 +233,7 @@ function createBankomat(bankNotesRepository, bank) {
         for (let note of Object.keys(bankNotesRepository))
             summa += note * bankNotesRepository[note]
         return summa;
-    }
+    };
   
 
 module.exports = { createClient, createBank, createBankomat };
