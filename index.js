@@ -78,10 +78,7 @@
           throw new Error('Ошибка');
         }
   
-        this.clients = this.clients.filter((index) => {
-          console.log(index);
-          return index !== presentClient;
-        });
+        this.clients = this.clients.filter((index) =>  index !== client);
         return true;
       },
     }
