@@ -39,7 +39,7 @@ function validateClient(client) {
 		&& client.name && typeof client.name === "string"
 		&& typeof client.balance === "number"
 	)) {
-		throw new TypeError("Invalid input data");
+		throw new Error("Invalid input data");
 	}
 	return client;
 }
@@ -58,7 +58,7 @@ function validateBank(bank) {
 		&& bank.clients instanceof Array
 		&& bank.bankName && typeof bank.bankName === "string"
 	)) {
-		throw new TypeError("Invalid input data");
+		throw new Error("Invalid input data");
 	}
 	return bank;
 }
@@ -74,7 +74,7 @@ function validateBankomat(bankomat) {
 		&& validateBank(bankomat.bank)
 		&& typeof bankomat.notesRepository === 'object'
 	)) {
-		throw new TypeError("Invalid input data");
+		throw new Error("Invalid input data");
 	}
 	return bankomat;
 }
