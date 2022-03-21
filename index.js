@@ -118,8 +118,13 @@ function createBank(bankName, clients = []) {
         },
     
         removeClient: client => {
-            
-            clients = clients.filter(!client);
+            if (!checkClient(client)){
+                throw new Error('Входные данные не корректны');
+            };
+            if (!clients.includes(client) || client == undefined){
+                throw new Error('Такой клиент отсутствует в банке');
+            };
+            clients = clients.filter(part => part !== client);
             return true;
         }
     };
