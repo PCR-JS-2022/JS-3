@@ -36,7 +36,7 @@
 function createClient(name, balance) {
   if (typeof name === "string" && typeof balance === "number")
     return { name, balance };
-  throw new Error("Ты втираешь мне какую-то дичь");
+  throw new Error(`Я сломался. [name]=${name}, [balance]=${balance}`);
 }
 
 /**
@@ -48,14 +48,20 @@ function createClient(name, balance) {
  */
 function createBank(bankName, clients) {
   if (typeof bankName !== "string" || !Array.isArray(clients))
-    throw new Error("Ты снова втираешь мне какую-то дичь");
+    throw new Error(
+      `Я сломался. [name]=${bankName}, [balance]=${JSON.stringify(clients)}`
+    );
 
   return {
     bankName,
     clients,
     addClient: (newClient) => {
       if (this.clients.some((client) => client.name === newClient.name))
-        throw new Error("Клиент с таким именем уже существует");
+        throw new Error(
+          `Клиент с таким именем уже существует. [client]=${JSON.stringify(
+            newClient
+          )}`
+        );
       else {
         this.clients.push(newClient);
         return true;
@@ -67,7 +73,12 @@ function createBank(bankName, clients) {
           (client) => client.name !== clientToRemove.name
         );
         return true;
-      } else throw new Error("Пытаемся удалить несуществующего клиента");
+      } else
+        throw new Error(
+          `Пытаемся удалить несуществующего клиента. [client]=${JSON.stringify(
+            clientToRemove
+          )}`
+        );
     },
   };
 }
@@ -87,7 +98,11 @@ function createBankomat(bankNotesRepository, bank) {
     !Object.prototype.hasOwnProperty.call(bank, "addClient") ||
     !Object.prototype.hasOwnProperty.call(bank, "removeClient")
   )
-    throw new Error("Мне не нравится то, что ты мне втираешь");
+    throw new Error(
+      `Ошибка в аргументах. [bankNotesRepository]=${JSON.stringify(
+        bankNotesRepository
+      )}, [bank]=${JSON.stringify(bank)}`
+    );
 
   const nominals = [10, 50, 100, 200, 500, 1000, 2000, 5000].reverse();
 
@@ -104,7 +119,9 @@ function createBankomat(bankNotesRepository, bank) {
         return true;
       } else
         throw new Error(
-          "Пытаемся установить пользователя к банкомату банка, клиентом которого он не ялвяется, либо у банкомата уже стоит клиент"
+          `Пытаемся установить пользователя к банкомату банка, клиентом которого он не является, либо у банкомата уже стоит клиент. [bank]=${JSON.stringify(
+            bank
+          )}, [client]=${JSON.stringify(clientToSet)}`
         );
     },
     removeClient: () => {
@@ -126,7 +143,7 @@ function createBankomat(bankNotesRepository, bank) {
     giveMoney: (sumToGive) => {
       if (sumToGive > this.currentClient.balance)
         throw new Error("Сумма выдачи больше баланса клиента");
-      if (sumToGive % 10 !== 0) throw new Error("Сумма выдали не кратна 10");
+      if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
       if (this.currentClient === undefined)
         throw new Error("С капустой никто не работает");
 
