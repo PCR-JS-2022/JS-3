@@ -183,12 +183,13 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
             let getMoney = getCash;
+            
         
             for(let note of getTrueMoney()){
                 var bill = Math.floor(getMoney/note);
                 if (bill >= 1){
-                    if(this.bankNotesRepository[note] >= bill){
-                    this.bankNotesRepository[note] -= bill;
+                    if(this.notesRepository[note] >= bill){
+                    this.notesRepository[note] -= bill;
                     noteIssuance[note] = bill;
                     getMoney -= note * bill;
                         if(getMoney === 0 )
@@ -202,7 +203,7 @@ function createBankomat(bankNotesRepository, bank) {
                         break
                     }
                 };
-            }this;
+            };
         }
     }
 };
