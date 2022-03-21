@@ -137,15 +137,14 @@ function createBankomat(bankNotesRepository, bank) {
             console.log(keysArr);
             keysArr.forEach((e) => {
                 const integerDiveder = parseInt(notesSum/e);
-                if (notesRepository[e] === 0 || integerDiveder === 0 || integerDiveder > notesRepository[e]) return;
+                if (this.notesRepository[e] === 0 || integerDiveder === 0 || integerDiveder > this.notesRepository[e]) return;
                 resultObject[+e] = integerDiveder;
-                notesRepository[e] -= integerDiveder;
+                this.notesRepository[e] -= integerDiveder;
                 notesSum -= e * integerDiveder;
             });
             if (isEmptyObject(resultObject) || notesSum > 0) {
                 throw new Error('У банкомата нет необходимых купюр для выдачи данной суммы.');
             }
-            if (notesSum)
             return resultObject;
         }
     }
