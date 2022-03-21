@@ -154,32 +154,27 @@ function createBankomat(bankNotesRepository, bank) {
             return true;
         },
 
-        addMoney(...addCash){
-            if (this.currentClient === undefined){
-                throw new Error('Клиент не выбран');
+        addMoney (...args) {
+            if (!this.currentClient) {
+              throw new Error('Клиент не выбран');
             }
-            addCash.forEach(part => {
-                for (let element of Object.entries(part)){
-                    if (!Object.keys(this.bankNotesRepository).includes(Object.keys(element))){
-                        this.bankNotesRepository[Object.keys(element)] = Object.values(element);
-                        this.currentClient.balance += Object.values(element) * Object.keys(element);
-                    };
-
-                    if (Object.keys(this.bankNotesRepository).includes(Object.keys(element))){
-                    this.bankNotesRepository[Object.keys(element)] += Object.values(element);
-                    this.currentClient.balance += Object.values(element) * (Object.keys(element))
-                    };
-            }});
-        },
+            return args.forEach(cash => {
+              Object.entries(cash).forEach(([banknote, count]) => {
+                this.notesRepository[banknote] += count;
+                this.currentClient.balance += banknote * count;
+              });
+            });
+            
+          },
 
         giveMoney(getCash){
-            if (!this.clients.includes(client)){
+            if (!this.bank.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
             if (!checkGetCash(getCash)){
                 throw new Error('Введите сумму списания кратную 10');
             }
-            if(!this.currentClient){
+            if(this.currentClient === undefined){
                 throw new Error('Выполните вход в систему');
             }
             if(!this.currentClient.balance > getCash){
