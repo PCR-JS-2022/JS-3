@@ -4,14 +4,14 @@
  * @property {string} name
  * @property {number} balance
  *//*
-const clientVasiliy = createClient('Василий', 2500);
+const clientVasiliy = createClient('вася', 2500);
 let bobo = [
    {
        name: 'петр',
        balance: 1488,
    },
    {
-       name: 'непетр',
+       name: 'хуетр',
        balance: 2500,
    },
    {
@@ -21,7 +21,7 @@ let bobo = [
 
 ]
 const greenBank = createBank('GREENBANK', bobo);*/
-/*let provero4ka = greenBank.addClient(bobo[1]);
+/*let provero4ka = greenBank.addClient(clientVasiliy);
 provero4ka =greenBank.removeClient(bobo[1]);*//*
 const notesRepository = {
     5000: 2,
@@ -36,8 +36,8 @@ const notesRepository = {
 
 let provero4ka = createBankomat(notesRepository, greenBank);
 let huet = provero4ka.giveMoney(2000);
-huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }]);
-let adin = 1;*/
+huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }]);*/
+let adin = 1;
 /**
  * @typedef Bank
  * @type {object}
@@ -70,7 +70,7 @@ const { throws } = require("assert");
  */
 function createClient(name, balance = 0) {
     const invalidArguments = new Error('Ошибка ввода "createClient"')
-    if (isNaN(balance) || typeof name != 'string'|| !name)
+    if (isNaN(balance) || typeof name !== 'string'|| !name)
         throw invalidArguments;
     return {
         name: name,
@@ -97,7 +97,7 @@ function createBank(bankName, clients = []) {
             const invalidArguments = new Error('Ошибка ввода "addClient"');
             const weAlreadyHaveThisClient = new Error('Такой клиент уже есть 2х нам не надо');
 
-            if (client === undefined || typeof client !== "object")
+            if (!isClient(client))
                 throw invalidArguments;
             if (!clients.includes(client)) {
                 clients.push(client);
@@ -109,7 +109,7 @@ function createBank(bankName, clients = []) {
             const invalidArguments = new Error('Ошибка ввода "removeClient"');
             const weDontHaveThisClient = new Error('Такой клиент уже есть 2х нам не надо');
 
-            if (client === undefined || typeof client !== "object")
+            if (!isClient(client))
                 throw invalidArguments;
             for (let i = 0; i < clients.length; i++) {
                 if (clients[i] === client) {
@@ -222,3 +222,9 @@ function createBankomat(bankNotesRepository, bank) {
 }
 
 module.exports = { createClient, createBank, createBankomat };
+
+function isClient(client) {
+    return (typeof client === 'object' &&
+        client.hasOwnProperty('name') && typeof client.name === 'string' &&
+        client.hasOwnProperty('balance') && typeof client.balance === 'number');
+}
