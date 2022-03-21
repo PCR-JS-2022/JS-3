@@ -163,7 +163,7 @@ function createBankomat(bankNotesRepository, bank) {
                 this.notesRepository[banknote] += count;
                 this.currentClient.balance += banknote * count;
               });
-            return addCash.bind(this)
+            return addCash
             });
             
           },
