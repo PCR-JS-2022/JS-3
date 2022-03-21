@@ -54,17 +54,17 @@
 
 const banknote = [10, 50, 100, 200, 500, 1000, 2000, 5000];
 
+function addStorage(money, client){
+    for (let key in money) {
+        client.notesRepository[key] += money[key];
+        client.currentClient.balance += key * money[key];
+    };
+}
+
 function correctStr(name) {
     return (typeof name === 'string' && name.length !== 0);
 }
 
-function addStorage(money, client, storage) {
-    for (let key in money) {
-        storage[key] = money[key];
-        client += key * money[key];
-    }
-
-}
 
 function correctInt(balance) {
     return typeof balance === 'number';
@@ -209,16 +209,16 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Клиента не использует банкомат')
             }
 
-            const storage = this.bankNotesRepository;
-            const client = this.currentClient.balance;
-            addStorage(money, client, storage);
+            let bank = this;
+            addStorage(money, bank);
+
 
 
             let sum = sumMoney(money);
 
             function f(b) {
                 sum += sumMoney(b);
-                addStorage(b, client, storage);
+                addStorage(b, bank);
                 return f;
             }
 
