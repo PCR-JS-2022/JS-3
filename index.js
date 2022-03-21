@@ -4,23 +4,23 @@
  * @property {string} name
  * @property {number} balance
  *//*
-const clientVasiliy = createClient('вася' , 2500);
+const clientVasiliy = createClient('вася', 2500);
 let bobo = [
-   {
-       name: 'петр',
-       balance: 1488,
-   },
-   {
-       name: 'непетр',
-       balance: 2500,
-   },
-   {
-       name: 'асетр',
-       balance: 1555,
-   },
+    {
+        name: 'петр',
+        balance: 1488,
+    },
+    {
+        name: 'непетр',
+        balance: 2500,
+    },
+    {
+        name: 'асетр',
+        balance: 1555,
+    },
 
-]*//*
-const greenBank = createBank('GREENBANK', bobo);
+]
+const greenBank = createBank('GREENBANK', bobo);*//*
 let provero4ka = greenBank.addClient(clientVasiliy);
 provero4ka =greenBank.removeClient(bobo[1]);
 provero4ka =greenBank.removeClient(clientVasiliy);
@@ -39,11 +39,11 @@ const notesRepository = {
 let provero4ka = createBankomat(notesRepository, greenBank);
 let huet = provero4ka.setClient(clientVasiliy);
 huet = provero4ka.giveMoney(2000);
-huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }]);
+huet = provero4ka.addMoney([{ 1000: 1, 500: 2 },{},{}]);
 huet = provero4ka.removeClient();
 huet = provero4ka.setClient(bobo[2]);
 huet = provero4ka.giveMoney(2000);
-huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }]);
+huet = provero4ka.addMoney([]);
 let adin = 1;*/
 /**
  * @typedef Bank
@@ -77,9 +77,9 @@ const { throws } = require("assert");
  */
 function createClient(name, balance = 0) {
     const invalidArguments = new Error('Ошибка ввода "createClient"')
-    if (isNaN(balance) || typeof name !== 'string'|| !name)
+    if (isNaN(balance) || typeof name !== 'string' || !name)
         throw invalidArguments;
-    
+
     return {
         name: name,
         balance: balance,
@@ -121,7 +121,7 @@ function createBank(bankName, clients = []) {
             if (!checkClient(client))
                 throw invalidArguments;
             if (!this.clients.includes(client))
-            throw weDontHaveThisClient;
+                throw weDontHaveThisClient;
 
             this.clients = this.clients.filter(clients => clients !== client);
             return true;
@@ -170,13 +170,17 @@ function createBankomat(bankNotesRepository, bank) {
             const NoCustomer = new Error('Клиента нет')
             if (currentClient !== undefined)
                 throw NoCustomer;
+            let moneyobj;
 
-            moooney.forEach(moneyobj => {
+            for (let j = 0; j < moooney.length; j++){
+                moneyobj = moooney[j];
                 for (let i = 1; i < 9; i++) {
-                    if (!isNaN(moneyobj[allBanknotes[i]]))
-                    notesRepository[allBanknotes[i]] += moneyobj[allBanknotes[i]];
+                    if (!isNaN(moneyobj[allBanknotes[i]])) {
+                        notesRepository[allBanknotes[i]] += moneyobj[allBanknotes[i]];
+                        this.currentClient.balance += moneyobj[allBanknotes[i]] * allBanknotes[i];
+                    }
                 }
-            });
+            };
             return notesRepository;
         },
         giveMoney: function (moooney) {
@@ -231,21 +235,21 @@ function createBankomat(bankNotesRepository, bank) {
 module.exports = { createClient, createBank, createBankomat };
 
 function checkClient(client) {
-    return (typeof client === 'object' 
-    && client.hasOwnProperty('name') 
-    && typeof client.name === 'string' 
-    && client.hasOwnProperty('balance') 
-    && typeof client.balance === 'number');
+    return (typeof client === 'object'
+        && client.hasOwnProperty('name')
+        && typeof client.name === 'string'
+        && client.hasOwnProperty('balance')
+        && typeof client.balance === 'number');
 }
 
 function checkBank(bank) {
-    return (typeof bank === 'object') 
-    && bank.hasOwnProperty('bankName') 
-    && typeof bank.bankName === 'string' 
-    && bank.hasOwnProperty('clients') 
-    && Array.isArray(bank.clients)
-    && bank.hasOwnProperty('addClient') 
-    && typeof bank.addClient === 'function' 
-    && bank.hasOwnProperty('removeCLient') 
-    && typeof bank.removeClient === 'function';
+    return (typeof bank === 'object')
+        && bank.hasOwnProperty('bankName')
+        && typeof bank.bankName === 'string'
+        && bank.hasOwnProperty('clients')
+        && Array.isArray(bank.clients)
+        && bank.hasOwnProperty('addClient')
+        && typeof bank.addClient === 'function'
+        && bank.hasOwnProperty('removeCLient')
+        && typeof bank.removeClient === 'function';
 }
