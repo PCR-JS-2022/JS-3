@@ -52,7 +52,7 @@ function checkBankNotesRepository(bankNotesRepository){
 };
 
 function checkGetCash(cash){
-    return cash > 0 || typeof(cash) == 'Number' || cash % 10 !== 0;
+    return typeof(cash) == 'Number' || (cash % 10) !== 0;
 };
 
 
