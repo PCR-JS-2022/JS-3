@@ -76,13 +76,14 @@ function correctMoney(money){
 }
 
 function correctBanknote(key) {
-    banknote.forEach(element => {
-        if (element === key) {
-            return true;
+    let flag = false
+    for(let i = 0; i < banknote.length; i++){
+        if (banknote[i] === +key) {
+            flag = true;
         }
-    });
-
-    return false;
+            
+    }
+    return flag
 }
 
 function sumMoney(...obj) {
@@ -262,12 +263,10 @@ function createBankomat(bankNotesRepository, bank) {
                 }
             }
 
-            this.notesRepository = Object.fromEntries(masStorage.map(([key, value]) => [key, value]));
-
             if (sumMoney !== 0) {
                 throw new Error('Не хватает купюр');
             }
-
+            this.notesRepository = Object.fromEntries(masStorage.map(([key, value]) => [key, value]));
             this.currentClient.balance -= money;
             return storage;
         }
