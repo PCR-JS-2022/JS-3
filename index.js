@@ -159,9 +159,7 @@ function createBankomat(bankNotesRepository, bank) {
         },
         
         removeClient() {
-            if (this.currentClient){
-                throw new Error('Свободная касса!!!');
-            }
+           
             this.currentClient = undefined;
             return true;
         },
