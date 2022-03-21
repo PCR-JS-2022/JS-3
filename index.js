@@ -137,7 +137,9 @@ function createBank(bankName, clients = []) {
  */
 function createBankomat(bankNotesRepository, bank) {
     const invalidArguments = new Error('Ошибка ввода "createBankomat"');
-    if (typeof bankNotesRepository != 'object' || checkBank(bank))
+    if (typeof bankNotesRepository != 'object' 
+    || !bankNotesRepository
+    || checkBank(bank))
         throw invalidArguments;
     let currentClient = undefined;
     let allBanknotes = {
@@ -166,22 +168,18 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient = undefined;
             return true;
         },
-        addMoney: function (moooney) {
+        addMoney: function (...moooney) {
             const NoCustomer = new Error('Клиента нет')
             if (currentClient !== undefined)
                 throw NoCustomer;
-            let moneyobj;
-
-            for (let j = 0; j < moooney.length; j++){
-                moneyobj = moooney[j];
-                for (let i = 1; i < 9; i++) {
-                    if (!isNaN(moneyobj[allBanknotes[i]])) {
-                        notesRepository[allBanknotes[i]] += moneyobj[allBanknotes[i]];
-                        this.currentClient.balance += moneyobj[allBanknotes[i]] * allBanknotes[i];
-                    }
-                }
+            
+            for (let moneyObj of moooney) {
+                for (let i in moneyObj) {
+                    this.notesRepository[i] += moneyObj[i];
+                    this.currentClient.balance += moneyObj[i] * i;
+                };
             };
-            return notesRepository;
+            return this.addMoney.bind(this);
         },
         giveMoney: function (moooney) {
             const NoCustomer = new Error('Клиента нет')
