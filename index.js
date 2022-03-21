@@ -27,6 +27,26 @@
  */
 
 /**
+ * @name validateClient
+ * @description Функция валидации клиента
+ * @param {Client} client Клиент
+ * @returns {Client} Объект клиента
+ */
+function validateClient(client) {
+
+	if (!(typeof client === "object"
+		&& client.hasOwnProperty("name")
+		&& client.hasOwnProperty("balance")
+		&& typeof client.name === "string" && client.name
+		&& typeof client.balance === "number"
+	)) {
+		throw new TypeError("incorrect input data");
+	}
+
+	return client;
+}
+
+/**
  * @name createClient
  * @description Функция для создания клиента
  * @param {string} name Имя клиента
@@ -34,22 +54,42 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance) {
-	if (!(name instanceof String && balance instanceof Number)) {
-		throw new TypeError();
-	}
-
-	return { name, balance }
+	return validateClient({ name, balance });
 }
 
 /**
  * @name createBank
  * @description Функция для создания банка
- * @param {bankName} name Имя банка
+ * @param {string} bankName Имя банка
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients) {
+	if (!(typeof bankName === "string" && clients instanceof Array && bankName)) {
+		throw new TypeError("incorrect input data");
+	}
 
+	return {
+		bankName,
+		clients,
+		addClient: (client) => {
+			if (!(validateClient(client) && clients.includes(client))) {
+				throw new Error("Not possible to add an existing client");
+			}
+			this.clients.push(client);
+			return true;
+		},
+		removeClient: (client) => {
+			validateClient(client);
+			clients.forEach((c, index) => {
+				if (c === client) {
+					clients.splice(index, 1);
+					return true;
+				}
+			})
+			throw new Error("Not possible to delete a non-existent client");
+		}
+	}
 }
 
 /**
