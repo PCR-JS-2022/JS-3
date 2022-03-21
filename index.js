@@ -37,13 +37,47 @@ function validateClient(client) {
 	if (!(typeof client === "object"
 		&& client.hasOwnProperty("name")
 		&& client.hasOwnProperty("balance")
-		&& typeof client.name === "string" && client.name
+		&& client.name && typeof client.name === "string"
 		&& typeof client.balance === "number"
 	)) {
-		throw new TypeError("incorrect input data");
+		throw new TypeError("Invalid input data");
 	}
-
 	return client;
+}
+
+/**
+ * @name validateBank
+ * @description Функция валидации банка
+ * @param {Bank} bank Банк
+ * @returns {Bank} Объект банка
+ */
+function validateBank(bank) {
+	if (!(typeof bank === "object"
+		&& bank.hasOwnProperty("addClient")
+		&& bank.hasOwnProperty("removeClient")
+		&& bank.hasOwnProperty("clients")
+		&& bank.clients instanceof Array
+		&& bank.bankName && typeof bank.bankName === "string"
+	)) {
+		throw new TypeError("Invalid input data");
+	}
+	return bank;
+}
+
+/**
+ * @name validateBankomat
+ * @description Функция валидации банкомата
+ * @param {Bankomat} bankomat Банкомат
+ * @returns {Bankomat} Объект банкомата
+ */
+function validateBankomat(bankomat) {
+	if (!(typeof bankomat === 'object'
+		&& validateBank(bankomat.bank)
+		&& typeof bankomat.notesRepository === 'object'
+	)) {
+		throw new TypeError("Invalid input data");
+	}
+	return bankomat;
 }
 
 /**
@@ -65,15 +99,11 @@ function createClient(name, balance) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients) {
-	if (!(typeof bankName === "string" && clients instanceof Array && bankName)) {
-		throw new TypeError("incorrect input data");
-	}
-
-	return {
+	return validateBank({
 		bankName,
 		clients,
 		addClient: (client) => {
-			if (!(validateClient(client) && clients.includes(client))) {
+			if (!(validateClient(client) && this.clients.includes(client))) {
 				throw new Error("Not possible to add an existing client");
 			}
 			this.clients.push(client);
@@ -81,26 +111,109 @@ function createBank(bankName, clients) {
 		},
 		removeClient: (client) => {
 			validateClient(client);
-			clients.forEach((c, index) => {
+			this.clients.forEach((c, index) => {
 				if (c === client) {
-					clients.splice(index, 1);
+					this.clients.splice(index, 1);
 					return true;
 				}
 			})
 			throw new Error("Not possible to delete a non-existent client");
 		}
-	}
+	});
 }
 
 /**
  * @name createBankomat
- * @description Фукнция для создания банкомата
- * @param {{[key: string]: number}} bankNotesRepository Репозиторий валют
+ * @description Функция для создания банкомата
+ * @param {{[key: string]: number}} notesRepository Репозиторий валют
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {
+function createBankomat(notesRepository, bank) {
+	return validateBankomat({
+		bank,
+		notesRepository,
+		currentClient: undefined,
+		setClient: (client) => {
+			if (!this.bank.clients.includes(client)) {
+				throw new Error("Bankomat don't work with not a bank clients");
+			}
+			if (this.currentClient === undefined) {
+				throw new Error("Bankomat can't work with multiple clients at the same time");
+			}
 
+			this.currentClient = client;
+			return true;
+		},
+		removeClient: (client) => {
+			if (!this.bank.clients.includes(client)) {
+				throw new Error("Bankomat don't work with not a bank clients");
+			}
+			if (this.currentClient === undefined) {
+				throw new Error("Bankomat already without a client");
+			}
+			if (this.currentClient === client) {
+				this.currentClient = undefined;
+				return true;
+			}
+
+			throw new Error("You're trying to remove a client who doesn't use a bankomat");
+		},
+		addMoney: (...moneyRepository) => {
+			if (this.currentClient === undefined) {
+				throw new Error("Client does not exist");
+			}
+
+			moneyRepository.reduce((moneyObject) => {
+				let amount = 0;
+				for (const nominal in moneyObject) {
+					this.notesRepository[nominal] += moneyRepository[nominal];
+					amount += moneyRepository[nominal] * parseInt(nominal);
+				}
+				this.currentClient.balance += amount;
+			})
+
+			return this.addMoney.bind(this);
+		},
+		giveMoney: (money) => {
+			if (money % 10 !== 0) {
+				throw new Error("Impossible to issue such a sum of money");
+			}
+			if (this.currentClient === undefined) {
+				throw new Error("Client does not exist");
+			}
+			if (money > this.currentClient.balance) {
+				throw new Error("Not enough money in the bank account");
+			}
+
+			let requiredMoney = money;
+			const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+
+			const moneyRepository = banknotes.reduce((moneyRepository, banknote) => {
+				let requiredBanknotes = Math.floor(money / banknote);
+				const stockBanknotes = this.notesRepository[banknote];
+
+				if (requiredBanknotes === 0) {
+					return moneyRepository;
+				}
+				if (stockBanknotes < requiredBanknotes) {
+					requiredBanknotes = stockBanknotes;
+				}
+
+				requiredMoney -= banknote * requiredBanknotes;
+				this.notesRepository[banknote] -= requiredBanknotes;
+				moneyRepository[banknote] = requiredBanknotes;
+				return moneyRepository;
+			}, {})
+
+			if (requiredMoney !== 0) {
+				throw Error("There are not enough banknotes in bankomat");
+			}
+
+			this.currentClient.balance -= money;
+			return moneyRepository;
+		}
+	});
 }
 
 module.exports = { createClient, createBank, createBankomat };
