@@ -162,7 +162,7 @@ function createBankomat(bankNotesRepository, bank) {
               Object.entries(cash).forEach(([banknote, count]) => {
                 this.notesRepository[banknote] += count;
                 this.currentClient.balance += banknote * count;
-              });
+              },this);
             return addCash
             });
             
