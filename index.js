@@ -39,8 +39,8 @@ function checkBankName(bankName){
 };
 
 function checkClient(client){
-    return (typeof client !== "object" || checkClientName || 
-    checkBalance);
+    return (typeof client !== "object" || checkClientName(client.name) || 
+    checkBalance(client.balance));
 };
 
 function checkBank(bank){
@@ -107,23 +107,23 @@ function createBank(bankName, clients = []) {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClient(client)) 
+            if (!checkClient(client)) {
                 throw new Error('Входные данные не корректны');
-
-            if (clients.includes(client))
+            }
+            if (clients.includes(client)){
                 throw new Error('Такой клиент уже имеется в банке');
-
+            }
             clients.push(client) 
             return true;
         },
     
         removeClient: client => {
-            if (!checkClient(client))
+            if (!checkClient(client)){
                 throw new Error('Входные данные не корректны');
-            
-            if (clients.includes(client))
+            }
+            if (clients.includes(client)){
                 throw new Error('Такой клиент отсутствует в банке');
-            
+            }
             clients = clients.filter(!client);
             return true;
         }
@@ -139,43 +139,43 @@ function createBank(bankName, clients = []) {
  */
 
 function createBankomat(bankNotesRepository, bank) {
-    if (!checkBank(bank) && !checkBankNotesRepository(bankNotesRepository))
+    if (!checkBank(bank) && !checkBankNotesRepository(bankNotesRepository)){
         throw new Error('Входные данные не корректны');
-    
+    }
     return {
         bank,
         bankNotesRepository,
         currentClient: undefined,
         
         setClient: client => {
-            if (!this.clients.includes(client))
+            if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
-
-            if (!this.currentClient === undefined)
+            }
+            if (!this.currentClient === undefined){
                 throw new Error('Банк занят другим пользователем');
-            
+            }
             this.currentClient = client;
             return true;
         },
         
         removeClient: () => {
-            if (!this.currentClient === undefined)
+            if (!this.currentClient === undefined){
                 throw new Error('Свободная касса!!!');
-            
+            }
             this.currentClient = undefined;
             return true;
         },
 
         addMoney: (...addCash) => {
-            if (!this.clients.includes(client))
+            if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
-
-            if (!checkAddMoney(addMoney))
+            }
+            if (!checkAddMoney(addMoney)){
                 throw new Error('Входные данные не корректны');
-
-            if (this.currentClient === undefined)
+            }
+            if (this.currentClient === undefined){
                 throw new Error('Клиент не выбран');
-            
+            }
             addCash.forEach(part => {
                 for (let element of Object.entries(part)){
                 if (!Object.keys(bankNotesRepository).includes(Object.keys(element))){
@@ -191,21 +191,21 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         giveMoney: (getCash) => {
-            if (!clients.includes(client))
+            if (!clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
-
-            if (!checkGetCash(getCash))
+            }
+            if (!checkGetCash(getCash)){
                 throw new Error('Введите сумму списания кратную 10');
-
-            if(!this.currentClient)
+            }
+            if(!this.currentClient){
                 throw new Error('Выполните вход в систему');
-
-            if(!this.currentClient.balance > getCash)
+            }
+            if(!this.currentClient.balance > getCash){
                 throw new Error('Недостаточно средств на балансе');
-
-            if(!checkBankomatFulness() > getCash)
+            }
+            if(!checkBankomatFulness() > getCash){
             throw new Error('В банкомате не достаточно средств');
-
+            }
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
             let getMoney = getCash;
