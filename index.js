@@ -142,13 +142,11 @@ function createBank(bankName, clients = []) {
             if (!correctClient(client)) {
                 throw new Error('Некорректные переданы данные');
             }
-
-            const indexClient = this.clients.findIndex(el => el.name === client.name);
-
-            if (indexClient === -1) {
+            if (!this.clients.includes(client)) {
                 throw new Error('Клиента нет в списке');
             }
-            this.clients.splice(indexClient, 1);
+
+            this.clients = this.clients.filter(el => el.name !== client.name)
             return true;
         }
     }
@@ -267,5 +265,6 @@ function createBankomat(bankNotesRepository, bank) {
 
     };
 }
+
 
 module.exports = { createClient, createBank, createBankomat };
