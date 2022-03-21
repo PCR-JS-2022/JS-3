@@ -76,7 +76,7 @@ function createBank(bankName, clients = []) {
       // check if client is already in list
       var ind = clients.findIndex((x) => x.name == client.name);
       if (ind == -1) throw new Error("Client does not exist");
-      clients.splice(ind, 1);
+      this.clients = this.clients.filter(x => x.name != client.name);
       return true;
     },
   };
@@ -281,6 +281,7 @@ const clientVasiliy = createClient("Василий", 2500);
  */
 
 greenBank.addClient(clientVasiliy); // true
+greenBank.removeClient(clientVasiliy);
 //greenBank.addClient(clientVasiliy); // Error
 
 greenBankBankomat.setClient(clientVasiliy); // true
