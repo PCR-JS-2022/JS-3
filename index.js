@@ -59,8 +59,8 @@ function createBank(bankName, clients = []) {
     throw new Error("Error when creating bank");
 
   return {
-    bankName: bankName,
-    clients: clients,
+    bankName,
+    clients,
 
     addClient(client) {
       if (!isClient(client)) throw new Error("Not a client");
@@ -104,8 +104,8 @@ function createBankomat(notesRepository, bank) {
   if (!checkRepository(notesRepository) || !isBank(bank))
     throw new Error("Error when creating bankomat");
   return {
-    notesRepository: notesRepository,
-    bank: bank,
+    notesRepository,
+    bank,
     currentClient: undefined,
 
     setClient(client) {
@@ -140,19 +140,6 @@ function createBankomat(notesRepository, bank) {
       return this.addMoney.bind(this);
     },
 
-    /*
-    addMoney: curry(function (notesRepository) {
-      if (this.currentClient === undefined) throw "No client";
-      let sum = 0;
-      for (key in notesRepository) {
-        this.bankNotesRepository[key] += notesRepository[key];
-        sum += Number(key) * notesRepository[key];
-      }
-      this.currentClient.balance += sum;
-      return this.addMoney.bind(this);
-    }),
-    */
-
     giveMoney(sumToGive) {
       if (this.currentClient === undefined) throw new Error("No client");
       if (typeof sumToGive != "number") throw new Error("Invalid sum");
@@ -163,14 +150,12 @@ function createBankomat(notesRepository, bank) {
 
       let nominals = [];
       for (let nominal in this.notesRepository) nominals.push(nominal);
-      nominals
-        .sort((first, second) => {
-          if (Number(first) > Number(second)) return 1;
-          if (Number(first) < Number(second)) return -1;
-          return 0;
-        })
-        .reverse();
-      let result = {};
+      nominals.sort((first, second) => {
+        if (Number(first) > Number(second)) return -1;
+        if (Number(first) < Number(second)) return 1;
+        return 0;
+      });
+      const result = {};
       let sum = sumToGive;
 
       nominals.forEach((el, ind) => {
@@ -192,20 +177,6 @@ function checkRepository(rep) {
   return typeof rep == "object";
 }
 
-/*
-function curry(func) {
-  return function curried(...args) {
-    if (args.length >= func.length) {
-        return func.apply(this, args);
-    } else {
-      return function (...args2) {
-        return curried.apply(this, args.concat(args2));
-      };
-    }
-  };
-}
-*/
-
 function isBank(bank) {
   if (typeof bank != "object") return false;
   if (typeof bank.bankName != "string" || !Array.isArray(bank.clients))
@@ -217,34 +188,11 @@ function isBank(bank) {
 function isFromBank(client, bank) {
   if (!isBank(bank) || !isClient(client)) return false;
 
-  return bank.clients.some(x => x.name == client.name);
+  return bank.clients.some((x) => x.name == client.name);
 }
 
 module.exports = { createClient, createBank, createBankomat };
 
-/*
-const bank = createBank("myBank");
-const client = createClient("Jhohn Doe", 100);
-const anotherBank = createBank("Jane Doe", [client]);
-console.log("stop");
-*/
-
-/*
-console.log(bank.addClient({name: 'Correct name', balance: 'Incorrect balance'}));
-console.log(bank.addClient({name: 123, balance: 123}));
-console.log(bank.addClient({name: 'Correct name', balance: 123}));
-console.log(bank.addClient({name: 'Correct name'}));
-console.log(bank.addClient({name: 'Correct name', balance: Number.POSITIVE_INFINITY}));
-*/
-
-/*
-console.log(bank.addClient({ name: "John Doe", balance: 100 }));
-console.log(bank.addClient({ name: "John Doe", balance: 200 }));
-
-console.log(bank.removeClient({ name: "John Doe", balance: 100 }));
-console.log(bank.removeClient({ name: "John Doe", balance: 200 }));
-console.log("stop");
-*/
 const greenBankNotesRepository = {
   5000: 2,
   2000: 3,
