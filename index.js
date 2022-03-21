@@ -70,7 +70,7 @@ function correctBanknote(key) {
     banknote.forEach(element => {
         if (element === key) {
             return true;
-        }
+        }ы
     });
 
     return false;
@@ -267,54 +267,5 @@ function createBankomat(bankNotesRepository, bank) {
 
     };
 }
-const greenBankNotesRepository = {
-    5000: 2,
-    2000: 3,
-    1000: 13,
-    500: 20,
-    200: 10,
-    100: 5,
-    50: 2,
-    10: 5,
-};
-
-const greenBank = createBank('GREENBANK');
-/**
- * {
- *   bankName: 'GREENBANK',
- *   clients: [],
- *   ...
- * }
- */
-const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
-/**
- * {
- *   notesRepository: greenBankNotesRepository,
- *   bank: greenBank,
- *   ...
- * }
- */
-
-const clientVasiliy = createClient('Василий', 2500);
-/**
- * {
- *   name: 'Василий',
- *   balance: 2500,
- * }
- */
-
-greenBank.addClient(clientVasiliy); // true
-//greenBank.addClient(clientVasiliy); // Error
-
-greenBankBankomat.setClient(clientVasiliy); // true
-
-greenBankBankomat.giveMoney(1000);
-/**
- * {
- *   1000: 1,
- * }
- */
-
-greenBankBankomat.removeClient() // true
 
 module.exports = { createClient, createBank, createBankomat };
