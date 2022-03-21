@@ -33,6 +33,9 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
+
+notes = [5000, 2000, 1000, 500, 200, 100, 50, 10]
+
 function createClient(name, balance) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error();
@@ -58,12 +61,17 @@ function createBank(bankName, clients) {
         bankName: bankName,
         clients: clients || [],
         addClient(person) {
-            if (!person instanceof Client || clients.includes(person)) throw new Error();
+            // if (
+            //     // !person instanceof Client ||
+            //     clients
+            //     || clients.includes(person)) throw new Error();
             this.clients.push(person);
             return true;
         },
         removeClient(person) {
-            if (!person instanceof Client || !clients.includes(person)) throw new Error();
+            if (
+                // !person instanceof Client ||
+                !clients.includes(person)) throw new Error();
             this.clients = this.clients.filter(client => client !== person);
             return true;
         }
@@ -78,27 +86,78 @@ function createBank(bankName, clients) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
+    if (typeof bankNotesRepository !== 'object' || !bank instanceof Object) {
+        throw new Error();
+    }
     return {
         bank: bank,
         notesRepository: bankNotesRepository,
         currentClient: undefined,
         setClient(person) {
-            if (!bank.clients.includes(person) || this.currentClient) throw new Error();
+            if (!this.bank.clients.includes(person) || this.currentClient) throw new Error();
             this.currentClient = person;
             return true
         },
-        removeClient(person) {
-            if (this.currentClient !== person || !this.currentClient) throw new Error();
+        removeClient() {
+            if (!this.currentClient) throw new Error();
             this.currentClient = undefined;
             return true;
         },
-        addMoney(banknotes) {
+        addMoney(...banknotes) {
+            if (!this.currentClient || banknotes.length === 0)
+                throw new Error();
 
+            for (const notes of banknotes) {
+                for (const note in notes) {
+                    this.notesRepository[notes] += notes[note];
+                    this.currentClient.balance += notes[note] * note;
+                }
+            }
+            return this.addMoney.bind(this);
         },
-        giveMoney(banknotes) {
-
+        giveMoney(money) {
+            if (!this.currentClient || money > this.currentClient.balance || money % 10 !== 0) throw new Error();
+            let result = {};
+            let notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+            let sum = money;
+            let repository = this.notesRepository;
+            while (sum !== 0) {
+                let note = notes[0];
+                let freeNotes = repository[note];
+                let notesNeeded = Math.floor(sum / note);
+                let numberOfNotes = Math.min(freeNotes, notesNeeded);
+                sum -= note * numberOfNotes;
+                if (numberOfNotes !== 0) {
+                    result[note] = numberOfNotes;
+                }
+                notes = notes.slice(1);
+            }
+            return result;
         }
     }
 }
+
+const greenBankNotesRepository = {
+    5000: 2,
+    2000: 3,
+    1000: 13,
+    500: 20,
+    200: 10,
+    100: 5,
+    50: 2,
+    10: 5,
+};
+
+const greenBank = createBank('GREENBANK');
+console.log(greenBank)
+const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
+console.log(greenBankBankomat)
+const clientVasiliy = createClient('Василий', 2500);
+console.log(clientVasiliy)
+console.log(greenBank.addClient(clientVasiliy)); // true
+console.log(greenBank.addClient(clientVasiliy)); // Error
+console.log(greenBankBankomat.setClient(clientVasiliy)); // true
+console.log(greenBankBankomat.giveMoney(2100));
+//console.log(greenBankBankomat.removeClient());
 
 module.exports = {createClient, createBank, createBankomat};
