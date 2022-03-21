@@ -153,7 +153,7 @@ function createBankomat(bankNotesRepository, bank) {
                 if(count !== 0) return { [e[0]]: count };
             }).filter(e => e !== undefined);
 
-            if(sum !== 0) {
+            if(tempSum !== 0) {
                 this.notesRepository = tempRep;
                 throw new Error();
             }
