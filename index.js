@@ -70,7 +70,7 @@ function correctBanknote(key) {
     banknote.forEach(element => {
         if (element === key) {
             return true;
-        }ы
+        }
     });
 
     return false;
