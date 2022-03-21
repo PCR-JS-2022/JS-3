@@ -178,7 +178,7 @@ function createBankomat(bankNotesRepository, bank) {
 
             const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
 
-            this.currentClient.balance -= getCash;
+            
             let noteIssuance = {};
             let getMoney = getCash;
 
@@ -186,7 +186,7 @@ function createBankomat(bankNotesRepository, bank) {
 				let bill = Math.floor(money / note)
 				const noteCount = this.notesRepository[note]
 				if (bill !== 0) {
-					if (noteCount <= cnt) {
+					if (noteCount <= bill) {
 						bill = noteCount
 					}
 					money -= bill * note
@@ -194,6 +194,7 @@ function createBankomat(bankNotesRepository, bank) {
 					result[note] = bill
 				}
 			};
+            this.currentClient.balance -= getMoney;
             return result;
         }
     };
