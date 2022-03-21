@@ -26,29 +26,6 @@
  * @property {(sumToGive: number) => boolean | Error} giveMoney
  */
 
-/**
- * @name createClient
- * @description Функция для создания клиента
- * @param {string} name Имя клиента
- * @param {number} balance Баланс клиента
- * @returns {Client} Объект клиента
- */
-
-function createClient(name, balance = 0) {
-    if(!checkClientName(name) || !checkBalance(balance))
-        throw new Error('Входные данные не корректны');
-        
-    return {name, balance};   
-};
-
-/**
- * @name createBank
- * @description Функция для создания банка
- * @param {bankName} name Имя банка
- * @param {Array<Client>} clients Список клиентов банка
- * @returns {Bank} Объект банка
- */
-
  function checkClientName(name){
     return typeof(name) == 'string';
 };
@@ -61,12 +38,13 @@ function checkBankName(bankName){
     return typeof(bankName) == 'string';
 };
 
-function checkClients(clients){
-    return Array.isArray(clients);
+function checkClient(client){
+    return (typeof client !== "object" || checkClientName || 
+    checkBalance);
 };
 
 function checkBank(bank){
-    return typeof(bank) == 'object' && typeof(Object.entries(bank)) == 'Object';
+    return typeof(bank) == 'object';
 };
 
 function checkBankNotesRepository(bankNotesRepository){
@@ -98,15 +76,38 @@ function checkBankomatFulness(){
     return summa;
 };
 
+/**
+ * @name createClient
+ * @description Функция для создания клиента
+ * @param {string} name Имя клиента
+ * @param {number} balance Баланс клиента
+ * @returns {Client} Объект клиента
+ */
+
+function createClient(name, balance = 0) {
+    if(!checkClientName(name) || !checkBalance(balance))
+        throw new Error('Входные данные не корректны');
+        
+    return {name, balance};   
+};
+
+/**
+ * @name createBank
+ * @description Функция для создания банка
+ * @param {bankName} name Имя банка
+ * @param {Array<Client>} clients Список клиентов банка
+ * @returns {Bank} Объект банка
+ */
+
 function createBank(bankName, clients = []) {
-    if (!checkBankName(bankName) || !checkClients(clients)){
+    if (!checkBankName(bankName) || !Array.isArray(clients)){
         throw new Error('Входные данные не корректны');
     }
     return {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClients(clients)) 
+            if (!checkClient(client)) 
                 throw new Error('Входные данные не корректны');
 
             if (clients.includes(client))
@@ -117,7 +118,7 @@ function createBank(bankName, clients = []) {
         },
     
         removeClient: client => {
-            if (!checkClients(client))
+            if (!checkClient(client))
                 throw new Error('Входные данные не корректны');
             
             if (clients.includes(client))
