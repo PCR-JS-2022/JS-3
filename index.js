@@ -99,9 +99,9 @@ function checkBankomatFulness(){
 };
 
 function createBank(bankName, clients = []) {
-    if (!checkBankName(bankName) && !checkClients(clients))
+    if (!checkBankName(bankName) || !checkClients(clients)){
         throw new Error('Входные данные не корректны');
-    
+    }
     return {
         bankName,
         clients,
