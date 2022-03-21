@@ -100,11 +100,11 @@ function isClient(client) {
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {
-  if (!checkRepository(bankNotesRepository) || !isBank(bank))
+function createBankomat(notesRepository, bank) {
+  if (!checkRepository(notesRepository) || !isBank(bank))
     throw new Error("Error when creating bankomat");
   return {
-    bankNotesRepository: bankNotesRepository,
+    notesRepository: notesRepository,
     bank: bank,
     currentClient: undefined,
 
