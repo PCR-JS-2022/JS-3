@@ -33,7 +33,7 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
   if (typeof name === "string" && typeof balance === "number")
     return { name, balance };
   throw new Error(`Я сломался. [name]=${name}, [balance]=${balance}`);
