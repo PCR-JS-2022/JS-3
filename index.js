@@ -56,7 +56,7 @@ function getTrueMoney(){
 }
 
 function checkGetCash(cash){
-    return cash > 0 && typeof(cash) == 'Number' || cash % 10 !== 0;
+    return cash > 0 || typeof(cash) == 'Number' || cash % 10 !== 0;
 };
 
 function checkBankomatFulness(){
