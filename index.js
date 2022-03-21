@@ -35,7 +35,7 @@
  */
 function createClient(name, balance = 0) {
   if (!checkName(name) || !checkBalance(balance))
-    throw "Error when creating client";
+    throw new Error("Error when creating client");
   return { name, balance };
 }
 
@@ -56,7 +56,7 @@ function checkBalance(balance) {
  */
 function createBank(bankName, clients = []) {
   if (!checkName(bankName) || !checkClientsList(clients))
-    throw "Error when creating bank";
+    throw new Error("Error when creating bank");
 
   return {
     bankName: bankName,
@@ -66,7 +66,7 @@ function createBank(bankName, clients = []) {
       if (!isClient(client)) return false;
       // check if client is already in list
       var ind = clients.findIndex((x) => x.name == client.name);
-      if (ind != -1) throw "Client already added";
+      if (ind != -1) throw new Error("Client already added");
       clients.push(client);
       return true;
     },
@@ -75,7 +75,7 @@ function createBank(bankName, clients = []) {
       if (!isClient(client)) return false;
       // check if client is already in list
       var ind = clients.findIndex((x) => x.name == client.name);
-      if (ind == -1) throw "Client does not exist";
+      if (ind == -1) throw new Error("Client does not exist");
       clients.splice(ind, 1);
       return true;
     },
@@ -104,16 +104,16 @@ function isClient(client) {
  */
 function createBankomat(bankNotesRepository, bank) {
   if (!checkRepository(bankNotesRepository) || !isBank(bank))
-    throw "Error when creating bankomat";
+    throw new Error("Error when creating bankomat");
   return {
     bankNotesRepository: bankNotesRepository,
     bank: bank,
     currentClient: undefined,
 
     setClient(client) {
-      if (!isFromBank(client, this.bank)) throw "Client from unsupported bank";
+      if (!isFromBank(client, this.bank)) throw new Error("Client from unsupported bank");
       if (this.currentClient != undefined)
-        throw "Cannot process multiple clients at once";
+        throw new Error("Cannot process multiple clients at once");
 
       if (!isClient(client)) return false;
       this.currentClient = client;
@@ -127,7 +127,7 @@ function createBankomat(bankNotesRepository, bank) {
     },
 
     addMoney: function (...args) {
-      if (this.currentClient === undefined) throw "No client";
+      if (this.currentClient === undefined) throw new Error("No client");
 
       args.forEach((el, ind) => {
         let sum = 0;
@@ -154,11 +154,11 @@ function createBankomat(bankNotesRepository, bank) {
     */
 
     giveMoney(sumToGive) {
-      if (this.currentClient === undefined) throw "No client";
+      if (this.currentClient === undefined) throw new Error("No client");
       if (typeof sumToGive != "number") return false;
       if (sumToGive % 10 != 0)
-        throw "Cannot give sum which is not a multiple of 10";
-      if (sumToGive > this.currentClient.balance) throw "Insufficient balance";
+        throw new Error("Cannot give sum which is not a multiple of 10");
+      if (sumToGive > this.currentClient.balance) throw new Error("Insufficient balance");
 
       let nominals = [];
       for (let nominal in this.bankNotesRepository) nominals.push(nominal);
@@ -182,7 +182,7 @@ function createBankomat(bankNotesRepository, bank) {
         }
       });
 
-      if (sum != 0) throw "Cannot form sum";
+      if (sum != 0) throw new Error("Cannot form sum");
     },
   };
 }
