@@ -132,7 +132,7 @@ function createBankomat(notesRepository, bank) {
       args.forEach((el, ind) => {
         let sum = 0;
         for (let nominal in el) {
-          this.bankNotesRepository[nominal] += el[nominal];
+          this.notesRepository[nominal] += el[nominal];
           sum += Number(nominal) * el[nominal];
         }
         this.currentClient.balance += sum;
@@ -162,7 +162,7 @@ function createBankomat(notesRepository, bank) {
         throw new Error("Insufficient balance");
 
       let nominals = [];
-      for (let nominal in this.bankNotesRepository) nominals.push(nominal);
+      for (let nominal in this.notesRepository) nominals.push(nominal);
       nominals
         .sort((first, second) => {
           if (Number(first) > Number(second)) return 1;
@@ -174,11 +174,11 @@ function createBankomat(notesRepository, bank) {
       let sum = sumToGive;
 
       nominals.forEach((el, ind) => {
-        while (el <= sum && this.bankNotesRepository[el] > 0) {
+        while (el <= sum && this.notesRepository[el] > 0) {
           if (result[el] === undefined) result[el] = 0;
           result[el] += 1;
           sum -= el;
-          this.bankNotesRepository[el] -= 1;
+          this.notesRepository[el] -= 1;
           if (sum == 0) break;
         }
       });
