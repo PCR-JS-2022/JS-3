@@ -40,6 +40,23 @@ function createClient(name, balance = 0) {
 }
 
 /**
+ *
+ * @param {Client} client
+ * @returns {boolean}
+ */
+function validateClient(client) {
+  if (
+    client === undefined ||
+    !Object.prototype.hasOwnProperty.call(client, "name") ||
+    !Object.prototype.hasOwnProperty.call(client, "balance") ||
+    typeof client.name !== "string" ||
+    typeof client.balance !== "number"
+  )
+    return false;
+  return true;
+}
+
+/**
  * @name createBank
  * @description Функция для создания банка
  * @param {string} bankName Имя банка
@@ -56,6 +73,9 @@ function createBank(bankName, clients = []) {
     bankName,
     clients,
     addClient: function (newClient) {
+      if (!validateClient(newClient))
+        throw new Error("Переданы невалидные аргументы");
+
       if (this.clients.some((client) => client.name === newClient.name))
         throw new Error(
           `Клиент с таким именем уже существует. [client]=${JSON.stringify(
@@ -68,6 +88,9 @@ function createBank(bankName, clients = []) {
       }
     },
     removeClient: function (clientToRemove) {
+      if (!validateClient(clientToRemove))
+        throw new Error("Переданы невалидные аргументы");
+
       if (this.clients.some((client) => client.name === clientToRemove.name)) {
         this.clients = this.clients.filter(
           (client) => client.name !== clientToRemove.name
