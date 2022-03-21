@@ -33,6 +33,7 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
+
 function createClient(name, balance = 0) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error("Невалидные данные");
@@ -47,6 +48,11 @@ function createClient(name, balance = 0) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
+
+function isClient(client) {
+    return typeof client === "object" && typeof client.name === "string" && typeof client.balance === "number";
+}
+
 function createBank(bankName, clients = []) {
     if(typeof bankName !== "string" || !Array.isArray(clients)) {
         throw new Error("Невалидные данные");
@@ -55,20 +61,20 @@ function createBank(bankName, clients = []) {
         bankName,
         clients,
         addClient(client) {
-            if(this.clients.filter(i => i === client).length !== 0) {
+            if(this.clients.includes(client)) {
                 throw new Error("Этот клиент уже есть");
             }
-            if(typeof client !== "object" || typeof client.name !== "string" || typeof client.balance !== "number") {
+            if(!isClient(client)) {
                 throw new Error("Невалидные данные");
             }
             this.clients.push(client);
             return true;
         },
         removeClient(client) {
-            if(clients.filter(i => i === client).length === 0) {
+            if(!this.clients.includes(client)) {
                 throw new Error("Такого клиента нет");
             }
-            if(typeof client !== "object" || typeof client.name !== "string" || typeof client.balance !== "number") {
+            if(!isClient(client)) {
                 throw new Error("Невалидные данные");
             }
             this.clients = this.clients.filter(i => i !== client);
@@ -84,6 +90,15 @@ function createBank(bankName, clients = []) {
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
+
+function isBank(bank) {
+    return typeof bank === "object" 
+        && typeof bank.bankName === "string" 
+        && Array.isArray(bank.clients) 
+        && typeof bank.addClient === "function" 
+        && typeof bank.removeClient === "function";
+}
+
 function createBankomat(bankNotesRepository, bank) {
     if(typeof bankNotesRepository !== "object" || !isBank(bank)) {
         throw new Error("Невалидные данные");
@@ -93,7 +108,7 @@ function createBankomat(bankNotesRepository, bank) {
         notesRepository: bankNotesRepository,
         currentClient: undefined,
         setClient(client) {
-            if(this.bank.clients.filter(i => i === client).length === 0) {
+            if(!this.bank.clients.includes(client)) {
                 throw new Error("Этот клиент не привязан к банку")
             };
             if(this.currentClient !== undefined) {
@@ -132,22 +147,23 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Сумма денег должна быть кратна 10');
             }
             let currentSum = money;
-            let banknotes = 0;
-            let result = {};
+            const result = {};
 
             let sortMoney = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
             for(let i = 0; i < sortMoney.length; i++) { 
                 let current = sortMoney[i];
-                if(currentSum > 0 && currentSum >= Number(current[0])) {
-                    banknotes = Math.floor(currentSum / Number(current[0]));
-                    if(banknotes > current[1]) {
-                        currentSum -= Number(current[0]) * current[1];
-                        result[current[0]] = current[1];
-                        this.notesRepository[current[0]] = 0;
+                const [note, noteCount] = current;
+                const noteAsNumber = Number(note);
+                if(currentSum > 0 && currentSum >= noteAsNumber) {
+                    const banknotes = Math.floor(currentSum / noteAsNumber);
+                    if(banknotes > noteCount) {
+                        currentSum -= noteAsNumber * noteCount;
+                        result[note] = noteCount;
+                        this.notesRepository[note] = 0;
                     } else {
-                        currentSum -= Number(current[0]) * banknotes;
-                        result[current[0]] = banknotes;
-                        this.notesRepository[current[0]] = current[1] - banknotes;
+                        currentSum -= noteAsNumber * banknotes;
+                        result[note] = banknotes;
+                        this.notesRepository[note] = noteCount - banknotes;
                     }
                 }
             }
@@ -160,14 +176,6 @@ function createBankomat(bankNotesRepository, bank) {
             }
         }
     }
-}
-
-function isBank(bank) {
-    return typeof bank === "object" 
-        && typeof bank.bankName === "string" 
-        && Array.isArray(bank.clients) 
-        && typeof bank.addClient === "function" 
-        && typeof bank.removeClient === "function";
 }
 
 const greenBankNotesRepository = {
