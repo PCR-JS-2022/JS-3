@@ -140,7 +140,7 @@ function createBankomat(bankNotesRepository, bank) {
       if (sumToGive > this.currentClient.balance) throw "Insufficient balance";
 
       let nominals = [];
-      for (key in this.bankNotesRepository) nominals.push(key);
+      for (let nominal in this.bankNotesRepository) nominals.push(nominal);
       nominals
         .sort((first, second) => {
           if (Number(first) > Number(second)) return 1;
