@@ -3,7 +3,7 @@
  * @type {object}
  * @property {string} name
  * @property {number} balance
- */
+ *//*
 const clientVasiliy = createClient('вася', 2500);
 let bobo = [
     {
@@ -20,11 +20,11 @@ let bobo = [
     },
 
 ]
-const greenBank = createBank('GREENBANK', bobo);/*
+const greenBank = createBank('GREENBANK', bobo);*//*
 let provero4ka = greenBank.addClient(clientVasiliy);
 provero4ka =greenBank.removeClient(bobo[1]);
 provero4ka =greenBank.removeClient(clientVasiliy);
-provero4ka = greenBank.addClient(bobo[1]);*/
+provero4ka = greenBank.addClient(bobo[1]);*//*
 const notesRepository = {
     5000: 2,
     2000: 5,
@@ -44,7 +44,7 @@ huet = provero4ka.removeClient();
 huet = provero4ka.setClient(bobo[2]);
 huet = provero4ka.giveMoney(2000);
 huet = provero4ka.addMoney([]);
-let adin = 1;
+let adin = 1;*/
 /**
  * @typedef Bank
  * @type {object}
