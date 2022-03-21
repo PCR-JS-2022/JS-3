@@ -151,14 +151,12 @@ function createBankomat(notesRepository, bank) {
 			if (this.currentClient === undefined) {
 				throw new Error("Client does not exist");
 			}
-			moneyRepository.reduce((moneyObject) => {
-				let amount = 0;
+			for (const moneyObject of moneyRepository) {
 				for (const nominal in moneyObject) {
-					this.notesRepository[nominal] += moneyRepository[nominal];
-					amount += moneyRepository[nominal] * parseInt(nominal);
+					this.notesRepository[nominal] += moneyObject[nominal];
+					this.currentClient.balance += moneyObject[nominal] * nominal;
 				}
-				this.currentClient.balance += amount;
-			})
+			}
 			return this.addMoney.bind(this);
 		},
 
