@@ -163,13 +163,13 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Недостаточно средств на балансе');
             };
 
-            let summa = 0
-            for (let note of Object.keys(this.bankNotesRepository))
-                summa = summa + note * this.bankNotesRepository[note]
+            let summa = 0;
+            for (let note in notes)
+                summa = summa + note * this.bankNotesRepository[note];
         
             if( summa < getCash){
             throw new Error('В банкомате не достаточно средств');
-            }
+            };
 
             const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
 
@@ -178,15 +178,15 @@ function createBankomat(bankNotesRepository, bank) {
             let getMoney = getCash;
 
             for (const note of notes) {
-				let bill = Math.floor(money / note)
-				const noteCount = this.notesRepository[note]
+				let bill = Math.floor(money / note);
+				const noteCount = this.notesRepository[note];
 				if (bill !== 0) {
 					if (noteCount <= bill) {
-						bill = noteCount
+						bill = noteCount;
 					}
-					money -= bill * note
-					this.notesRepository[note] -= bill
-					result[note] = bill
+					money -= bill * note;
+					this.notesRepository[note] -= bill;
+					result[note] = bill;
 				}
 			};
             this.currentClient.balance -= getMoney;
