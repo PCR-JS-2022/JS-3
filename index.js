@@ -124,7 +124,7 @@ function createBank(bankName, clients = []) {
             if (!clients.includes(client)){
                 throw new Error('Такой клиент отсутствует в банке');
             };
-            clients = this.clients.filter(part => part !== client);
+            clients = clients.filter(part => part !== client);
             return true;
         }
     };
