@@ -46,7 +46,7 @@ function createClient(name, balance = 0) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
   if (typeof bankName !== "string" || !Array.isArray(clients))
     throw new Error(
       `Я сломался. [name]=${bankName}, [balance]=${JSON.stringify(clients)}`
@@ -90,7 +90,7 @@ function createBank(bankName, clients) {
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {
+function createBankomat(bankNotesRepository = {}, bank) {
   if (
     typeof bankNotesRepository !== "object" ||
     !Object.prototype.hasOwnProperty.call(bank, "bankName") ||
