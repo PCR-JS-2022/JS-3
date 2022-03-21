@@ -34,7 +34,18 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-  return { name, balance };
+  return { name: checkName(name), balance: checkBalance(balance) };
+}
+
+function checkName(name) {
+  if (typeof name == "string") return name;
+  throw "Incorrect name for client";
+}
+
+function checkBalance(balance) {
+  if (typeof balance == "number" && Number.isFinite(balance))
+    return balance;
+  throw "Incorrect balance value";
 }
 
 /**
@@ -46,8 +57,8 @@ function createClient(name, balance = 0) {
  */
 function createBank(bankName, clients = []) {
   return {
-    bankName: bankName,
-    clients: clients,
+    bankName: checkName(bankName),
+    clients: checkClientsList(clients),
 
     addClient(client) {
       if (!isClient(client)) return false;
@@ -69,6 +80,14 @@ function createBank(bankName, clients = []) {
   };
 }
 
+function checkClientsList(list) {
+  if (!Array.isArray(list)) throw "Wrong clients list format";
+  if (list.length > 0 && !list.every((x) => isClient(x))) {
+    throw "Wrong clients list format";
+  }
+  return list;
+}
+
 function isClient(client) {
   if (typeof client != "object") return false;
   if (typeof client.name != "string" || typeof client.balance != "number")
@@ -86,7 +105,7 @@ function isClient(client) {
 function createBankomat(bankNotesRepository, bank) {
   return {
     bankNotesRepository: bankNotesRepository,
-    bank: isBank(bank) ? bank : undefined,
+    bank: isBank(bank),
     currentClient: undefined,
 
     setClient(client) {
@@ -166,6 +185,11 @@ function createBankomat(bankNotesRepository, bank) {
   };
 }
 
+function checkRepository(rep) {
+  if (typeof rep != "object") throw "Wrong repository format";
+  return rep;
+}
+
 /*
 function curry(func) {
   return function curried(...args) {
@@ -181,11 +205,14 @@ function curry(func) {
 */
 
 function isBank(bank) {
-  if (typeof bank != "object") return false;
-  if (typeof bank.bankName != "string" || !Array.isArray(bank.clients))
-    return false;
-  if (bank.clients.length > 0) return bank.clients.every((x) => isClient(x));
-  return true;
+  if (typeof bank != "object") throw "Wrong bank format";
+  if (typeof bank.bankName != "string" || !Array.isArray(bank.clients)) {
+    throw "Wrong bank format";
+  }
+  if (bank.clients.length > 0 && !bank.clients.every((x) => isClient(x))) {
+    throw "Wrong bank format";
+  }
+  return bank;
 }
 
 function isFromBank(client, bank) {
