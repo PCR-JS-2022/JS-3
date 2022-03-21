@@ -151,7 +151,7 @@ function createBankomat(bankNotesRepository, bank) {
             if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
-            if (!this.currentClient === undefined){
+            if (this.currentClient){
                 throw new Error('Банк занят другим пользователем');
             }
             this.currentClient = client;
@@ -159,7 +159,7 @@ function createBankomat(bankNotesRepository, bank) {
         },
         
         removeClient() {
-            if (this.currentClient === undefined){
+            if (this.currentClient){
                 throw new Error('Свободная касса!!!');
             }
             this.currentClient = undefined;
@@ -173,25 +173,25 @@ function createBankomat(bankNotesRepository, bank) {
             if (!checkAddMoney(addMoney)){
                 throw new Error('Входные данные не корректны');
             }
-            if (this.currentClient === undefined){
+            if (this.currentClient){
                 throw new Error('Клиент не выбран');
             }
             addCash.forEach(part => {
                 for (let element of Object.entries(part)){
-                if (!Object.keys(bankNotesRepository).includes(Object.keys(element))){
-                    bankNotesRepository[Object.keys(element)] = Object.values(element);
-                    this.currentClient.balance += Object.values(element) * Object.keys(element);
-                };
+                    if (!Object.keys(this.bankNotesRepository).includes(Object.keys(element))){
+                        this.bankNotesRepository[Object.keys(element)] = Object.values(element);
+                        this.currentClient.balance += Object.values(element) * Object.keys(element);
+                    };
 
-                if (Object.keys(bankNotesRepository).includes(Object.keys(element))){
-                bankNotesRepository[Object.keys(element)] += Object.values(element);
-                this.currentClient.balance += Object.values(element) * (Object.keys(element))
-                };
+                    if (Object.keys(this.bankNotesRepository).includes(Object.keys(element))){
+                    this.bankNotesRepository[Object.keys(element)] += Object.values(element);
+                    this.currentClient.balance += Object.values(element) * (Object.keys(element))
+                    };
             }});
         },
 
         giveMoney(getCash){
-            if (!clients.includes(client)){
+            if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
             if (!checkGetCash(getCash)){
@@ -213,15 +213,15 @@ function createBankomat(bankNotesRepository, bank) {
             for(let note of getTrueMoney()){
                 var bill = Math.floor(getMoney/note);
                 if (bill >= 1){
-                    if(bankNotesRepository[note] >= bill){
-                    bankNotesRepository[note] -= bill;
+                    if(this.bankNotesRepository[note] >= bill){
+                    this.bankNotesRepository[note] -= bill;
                     noteIssuance[note] = bill;
                     getMoney -= note * bill;
                         if(getMoney === 0 )
                             break
                     }
                     else{
-                        bill = bankNotesRepository[note];
+                        bill = this.bankNotesRepository[note];
                         noteIssuance[note] = bill;
                         getMoney -= note * bill;
                         if(getMoney === 0 )
