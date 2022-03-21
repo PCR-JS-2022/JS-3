@@ -189,23 +189,23 @@ function createBankomat(bankNotesRepository, bank) {
                 if (bill >= 1){
                     if(this.bankNotesRepository[note] >= bill){
                     this.bankNotesRepository[note] -= bill;
-                    noteIssuance[note] = bill;
+                    noteIssuance.concat(bankNotesRepository[note] = bill )
                     getMoney -= note * bill;
                         if(getMoney === 0 )
                             break
                     }
                     else{
                         bill = this.bankNotesRepository[note];
-                        noteIssuance[note] = bill;
+                        noteIssuance.concat(bankNotesRepository[note] = bill )
                         getMoney -= note * bill;
                         if(getMoney === 0 )
                         break
                     }
                 };
             };
-            return noteIssuance
+            return noteIssuance;
         }
-    }
+    };
 };
 
 module.exports = { createClient, createBank, createBankomat };
