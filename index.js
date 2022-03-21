@@ -58,11 +58,11 @@ function checkBalance(balance){
 };
 
 function checkBankName(bankName){
-    return typeof(bankName) == 'string' && bankName !== undefined;
+    return typeof(bankName) == 'string';
 };
 
-function checkClientsObject(clients){
-    return typeof(clients) == 'object' && clients !== undefined;
+function checkClients(clients){
+    return Array.isArray(clients);
 };
 
 function checkBank(bank){
@@ -99,14 +99,14 @@ function checkBankomatFulness(){
 };
 
 function createBank(bankName, clients = []) {
-    if (!checkBankName(bankName) && !checkClientsObject(clients))
+    if (!checkBankName(bankName) && !checkClients(clients))
         throw new Error('Входные данные не корректны');
     
     return {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClientsObject(clients)) 
+            if (!checkClients(clients)) 
                 throw new Error('Входные данные не корректны');
 
             if (clients.includes(client))
@@ -117,7 +117,7 @@ function createBank(bankName, clients = []) {
         },
     
         removeClient: client => {
-            if (!checkClientsObject(client))
+            if (!checkClients(client))
                 throw new Error('Входные данные не корректны');
             
             if (clients.includes(client))
