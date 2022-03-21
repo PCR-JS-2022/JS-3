@@ -170,11 +170,11 @@ function createBankomat(bankNotesRepository = {}, bank) {
       return this.addMoney;
     },
     giveMoney: function (sumToGive) {
+      if (this.currentClient === undefined)
+        throw new Error("С капустой никто не работает");
       if (sumToGive > this.currentClient.balance)
         throw new Error("Сумма выдачи больше баланса клиента");
       if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
-      if (this.currentClient === undefined)
-        throw new Error("С капустой никто не работает");
 
       const moneyToGive = {};
       nominals.forEach((nominal) => {
@@ -192,6 +192,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
 
       if (sumToGive !== 0) throw new Error("Не хватило капусты");
 
+      this.currentClient.balance -= sumToGive;
       return moneyToGive;
     },
   };
