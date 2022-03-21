@@ -178,15 +178,17 @@ function createBankomat(bankNotesRepository = {}, bank) {
       if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
 
       const moneyToGive = {};
+      const bankomat = this;
       nominals.forEach((nominal) => {
         const nominalNumber = Number.parseInt(nominal);
 
         if (sumToGive === 0 || nominalNumber > sumToGive) return;
         const count = Math.min(
           Math.trunc(sumToGive / nominalNumber),
-          this.notesRepository[nominal]
+          bankomat.notesRepository[nominal]
         );
         sumToGive -= nominalNumber * count;
+        bankomat.notesRepository[nominal] -= count;
         moneyToGive[nominal] = count;
       });
 
