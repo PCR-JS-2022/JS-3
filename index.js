@@ -33,7 +33,7 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+
 
 /**
  * @name createBank
@@ -42,7 +42,7 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+
 
 /**
  * @name createBankomat
@@ -51,6 +51,270 @@ function createBank(bankName, clients) {}
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {}
+
+const banknote = [10, 50, 100, 200, 500, 1000, 2000, 5000];
+
+function correctStr(name) {
+    return (typeof name === 'string' && name.length !== 0);
+}
+
+function correctInt(balance) {
+    return typeof balance === 'number';
+}
+
+function correctObj(obj) {
+    return (typeof obj === 'object');
+}
+
+function correctBanknote(key) {
+    banknote.forEach(element => {
+        if (element === key) {
+            return true;
+        }
+    });
+
+    return false;
+}
+
+function sumMoney(...obj) {
+    let sum = 0;
+    for (let i = 0; i < obj.length; i++) {
+        for (let key in obj[i]) {
+            if (correctBanknote(key)) {
+                sum += key * obj[i][key];
+            } else {
+                throw new Error('Некорректная купюра');
+            }
+
+        }
+    }
+    return sum;
+}
+function correctClient(client) {
+    return (correctObj(client) && correctStr(client.name) && correctInt(client.balance));
+}
+
+function correctClients(clients) {
+    let flag = true;
+    for (let i = 0; i < clients.length; i++) {
+        if (!correctClient(clients[i])) {
+            flag = false;
+        }
+    };
+    return (Array.isArray(clients) && clients.length !== 0 && flag);
+}
+
+
+function createClient(name, balance = 0) {
+    if (!correctStr(name) && !correctInt(balance)) {
+        throw new Error('Некорректные данные');
+    }
+    return {
+        name,
+        balance
+    };
+}
+
+
+function createBank(bankName, clients = []) {
+    if (!correctStr(bankName) && !correctClients(clients)) {
+        throw new Error('Некорректные данные');
+    }
+    return {
+        bankName,
+        clients,
+
+        addClient: function (client) {
+            if (!correctClient(client)) {
+                throw new Error('Некорректно переданы данные данные')
+            }
+            const isClient = this.clients.find(el => el.name === client.name);
+
+            if (isClient !== undefined) {
+                throw new Error('Клиент уже в списке');
+            }
+            this.clients.push(client);
+            return true;
+        },
+
+        removeClient: function (client) {
+
+            if (!correctClient(client)) {
+                throw new Error('Некорректные переданы данные');
+            }
+
+            const indexClient = this.clients.findIndex(el => el.name === client.name);
+
+            if (indexClient === -1) {
+                throw new Error('Клиента нет в списке');
+            }
+            this.clients.splice(indexClient, 1);
+            return true;
+        }
+    }
+}
+
+function createBankomat(bankNotesRepository, bank) {
+    if (!correctObj(bankNotesRepository) && !correctObj(bank)) {
+        throw new Error('Некорректные данные');
+    }
+
+    return {
+        bank,
+        notesRepository: bankNotesRepository,
+        currentClient: undefined,
+
+        setClient: function (client) {
+            if (!correctClient(client)) {
+                throw new Error('Некорректные переданы данные');
+            }
+            const clientIsBank = this.bank.clients.find(el => el.name === client.name);
+            if (clientIsBank === undefined) {
+                throw new Error('Данный клиент не принадлежит этому банку')
+            }
+            if (this.currentClient !== undefined) {
+                throw new Error('Банкомат занят');
+            }
+            this.currentClient = client;
+            return true;
+        },
+
+        removeClient: function () {
+            this.currentClient = undefined;
+            return true;
+        },
+
+        addMoney: function (money) {
+            if (!correctObj(money)) {
+                throw new Error('Некорректные данные');
+            }
+
+            if (this.currentClient === undefined) {
+                throw new Error('Клиента не использует банкомат')
+            }
+
+            let sum = sumMoney(money);
+
+            function f(b) {
+                sum += sumMoney(b);
+                return f;
+            }
+
+            f.toString = function () {
+                return sum;
+            }
+            return f;
+        },
+
+        giveMoney: function (money) {
+            if (this.currentClient === undefined) {
+                throw new Error('Клиента не использует банкомат')
+            }
+
+            if (this.currentClient.balance < money) {
+                throw new Error('На балансе не хватает средств');
+            }
+
+            if (money % 10 !== 0 && money > 0) {
+                throw new Error('Сумма должна быть корректная');
+            }
+            let sumMoney = money;
+            let storage = {
+                5000: 0,
+                2000: 0,
+                1000: 0,
+                500: 0,
+                200: 0,
+                100: 0,
+                50: 0,
+                10: 0,
+            };
+
+            let masStorage = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
+            for (let i = 0; i < masStorage.length; i++) {
+                const cur = masStorage[i];
+                if (cur[1] === 0 || sumMoney < i[0]) {
+                    continue;
+                }
+                let banknotes = 0;
+                if (sumMoney >= cur[0]) {
+                    banknotes = Math.floor(sumMoney / cur[0]);
+                    if (cur[1] >= banknotes) {
+                        sumMoney -= cur[0] * banknotes;
+                        cur[1] -= banknotes;
+                        storage[cur[0]] += banknotes;
+                        if (sumMoney === 0) {
+                            break;
+                        }
+                    } else {
+                        sumMoney -= cur[0] * cur[1];
+                        storage[cur[0]] += cur[1];
+                        cur[1] = 0;
+                    }
+                }
+            }
+
+            this.notesRepository = Object.fromEntries(masStorage.map(([key, value]) => [key, value]));
+
+            if (sumMoney !== 0) {
+                throw new Error('Не хватает купюр');
+            }
+
+            this.currentClient.balance -= money;
+            return storage;
+        }
+
+
+    };
+}
+const greenBankNotesRepository = {
+    5000: 2,
+    2000: 3,
+    1000: 13,
+    500: 20,
+    200: 10,
+    100: 5,
+    50: 2,
+    10: 5,
+};
+
+const greenBank = createBank('GREENBANK');
+/**
+ * {
+ *   bankName: 'GREENBANK',
+ *   clients: [],
+ *   ...
+ * }
+ */
+const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
+/**
+ * {
+ *   notesRepository: greenBankNotesRepository,
+ *   bank: greenBank,
+ *   ...
+ * }
+ */
+
+const clientVasiliy = createClient('Василий', 2500);
+/**
+ * {
+ *   name: 'Василий',
+ *   balance: 2500,
+ * }
+ */
+
+greenBank.addClient(clientVasiliy); // true
+//greenBank.addClient(clientVasiliy); // Error
+
+greenBankBankomat.setClient(clientVasiliy); // true
+
+greenBankBankomat.giveMoney(1000);
+/**
+ * {
+ *   1000: 1,
+ * }
+ */
+
+greenBankBankomat.removeClient() // true
 
 module.exports = { createClient, createBank, createBankomat };
