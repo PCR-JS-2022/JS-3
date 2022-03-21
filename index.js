@@ -145,6 +145,7 @@ function createBankomat(bankNotesRepository, bank) {
     return {
         bank,
         bankNotesRepository,
+        currentClient: undefined,
         
         setClient(client) {
             if (!this.clients.includes(client)){
