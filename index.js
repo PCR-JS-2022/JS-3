@@ -164,10 +164,7 @@ function createBankomat(bankNotesRepository, bank) {
             return true;
         },
 
-        addMoney(...addCash) {
-            if (!this.bank.clients.includes(client)){
-                throw new Error('Вы не являетесь клиентом этого банка');
-            }
+        addMoney(...addCash){
             if (!checkAddMoney(addMoney)){
                 throw new Error('Входные данные не корректны');
             }
