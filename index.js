@@ -164,6 +164,7 @@ function createBankomat(bankNotesRepository, bank) {
             };
 
             let summa = 0;
+            const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
             for (let note in notes)
                 summa = summa + note * this.bankNotesRepository[note];
         
@@ -171,9 +172,6 @@ function createBankomat(bankNotesRepository, bank) {
             throw new Error('В банкомате не достаточно средств');
             };
 
-            const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
-
-            
             let noteIssuance = {};
             let getMoney = getCash;
 
