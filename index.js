@@ -33,7 +33,13 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+function createClient(name, balance) {
+	if (!(name instanceof String && balance instanceof Number)) {
+		throw new TypeError();
+	}
+
+	return { name, balance }
+}
 
 /**
  * @name createBank
@@ -42,7 +48,9 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+function createBank(bankName, clients) {
+
+}
 
 /**
  * @name createBankomat
@@ -51,6 +59,8 @@ function createBank(bankName, clients) {}
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {}
+function createBankomat(bankNotesRepository, bank) {
+
+}
 
 module.exports = { createClient, createBank, createBankomat };
