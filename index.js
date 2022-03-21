@@ -136,7 +136,8 @@ function createBankomat(bankNotesRepository = {}, bank) {
     setClient: function (clientToSet) {
       if (
         this.bank.clients.some((client) => client.name === clientToSet.name) &&
-        this.currentClient === undefined
+        this.currentClient === undefined &&
+        validateClient(clientToSet)
       ) {
         this.currentClient = clientToSet;
         return true;
