@@ -179,12 +179,13 @@ function createBankomat(bankNotesRepository, bank) {
             if( summa > getCash){
             throw new Error('В банкомате не достаточно средств');
             }
+
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
             let getMoney = getCash;
 
             for(let note of getTrueMoney()){
-                var bill = Math.floor(getMoney/note);
+                let bill = Math.floor(getMoney/note);
                 if (bill >= 1){
                     if(this.bankNotesRepository[note] >= bill){
                     this.bankNotesRepository[note] -= bill;
@@ -202,6 +203,7 @@ function createBankomat(bankNotesRepository, bank) {
                     }
                 };
             };
+            return noteIssuance
         }
     }
 };
