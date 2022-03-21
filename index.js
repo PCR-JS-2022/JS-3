@@ -71,13 +71,11 @@ function createBank(bankName, clients = []) {
             return true;
         },
         removeClient: function(client) {
-            const index = this.clients.findIndex(e => e.name === client.name);
-
-            if(index === -1 || !isClient(client)){
+            if(this.clients.findIndex(e => e.name === client.name) === -1 || !isClient(client)){
                 throw new Error();
             }
 
-            this.clients.splice(index, 1);
+            this.clients = this.clients.filter(e => e.name !== client.name);
             return true;
         }
     };
