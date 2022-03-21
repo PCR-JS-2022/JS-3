@@ -148,7 +148,7 @@ function createBankomat(bankNotesRepository, bank) {
         currentClient: undefined,
         
         setClient(client) {
-            if (!this.clients.includes(client)){
+            if (!this.clients.some(elem => elem === client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
             if (this.currentClient){
