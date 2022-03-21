@@ -75,7 +75,7 @@ function createBank(bankName, clients) {
             } else if (!this.clients.some(existingClient => existingClient.name === client.name)) {
                 throw new Error('Клиента не существет');
             } else {
-                this.clients = clients.filter(existingClient => existingClient.name !== client.name);
+                this.clients = this.clients.filter(existingClient => existingClient.name !== client.name);
                 return true;
             }
         }
