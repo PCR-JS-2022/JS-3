@@ -21,7 +21,7 @@
  * @property {{[key: string]: number}} notesRepository
  * @property {Client | undefined} currentClient
  * @property {(client: Client) => boolean} setClient
- * @property {(client: Client) => boolean} removeClient
+ * @property {() => boolean} removeClient
  * @property {(notesRepository: {[key: string]: number}) => void} addMoney
  * @property {(sumToGive: number) => boolean | Error} giveMoney
  */
@@ -33,7 +33,6 @@
  * @returns {Client} Объект клиента
  */
 function validateClient(client) {
-
 	if (!(typeof client === "object"
 		&& client.hasOwnProperty("name")
 		&& client.hasOwnProperty("balance")
@@ -110,7 +109,7 @@ function createBank(bankName, clients = []) {
 			return true;
 		},
 		removeClient: function (client) {
-			if (!validateClient(client) || this.clients.includes(client)) {
+			if (!validateClient(client) || !this.clients.includes(client)) {
 				throw new Error("Not possible to delete a non-existent client");
 			}
 			this.clients = this.clients.filter(c => c !== client);
@@ -131,36 +130,27 @@ function createBankomat(notesRepository, bank) {
 		bank,
 		notesRepository,
 		currentClient: undefined,
-		setClient: (client) => {
+
+		setClient: function (client) {
 			if (!this.bank.clients.includes(client)) {
 				throw new Error("Bankomat don't work with not a bank clients");
 			}
-			if (this.currentClient === undefined) {
+			if (this.currentClient !== undefined) {
 				throw new Error("Bankomat can't work with multiple clients at the same time");
 			}
-
 			this.currentClient = client;
 			return true;
 		},
-		removeClient: (client) => {
-			if (!this.bank.clients.includes(client)) {
-				throw new Error("Bankomat don't work with not a bank clients");
-			}
-			if (this.currentClient === undefined) {
-				throw new Error("Bankomat already without a client");
-			}
-			if (this.currentClient === client) {
-				this.currentClient = undefined;
-				return true;
-			}
 
-			throw new Error("You're trying to remove a client who doesn't use a bankomat");
+		removeClient: function () {
+			this.currentClient = undefined;
+			return true;
 		},
-		addMoney: (...moneyRepository) => {
+
+		addMoney: function (...moneyRepository) {
 			if (this.currentClient === undefined) {
 				throw new Error("Client does not exist");
 			}
-
 			moneyRepository.reduce((moneyObject) => {
 				let amount = 0;
 				for (const nominal in moneyObject) {
@@ -169,10 +159,10 @@ function createBankomat(notesRepository, bank) {
 				}
 				this.currentClient.balance += amount;
 			})
-
 			return this.addMoney.bind(this);
 		},
-		giveMoney: (money) => {
+
+		giveMoney: function (money) {
 			if (money % 10 !== 0) {
 				throw new Error("Impossible to issue such a sum of money");
 			}
@@ -187,7 +177,7 @@ function createBankomat(notesRepository, bank) {
 			const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
 
 			const moneyRepository = banknotes.reduce((moneyRepository, banknote) => {
-				let requiredBanknotes = Math.floor(money / banknote);
+				let requiredBanknotes = Math.floor(requiredMoney / banknote);
 				const stockBanknotes = this.notesRepository[banknote];
 
 				if (requiredBanknotes === 0) {
