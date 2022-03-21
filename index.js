@@ -110,9 +110,9 @@ function createBankomat(bankNotesRepository, bank) {
 
       args.forEach((el, ind) => {
         let sum = 0;
-        for (key in el) {
-          this.bankNotesRepository[key] += el[key];
-          sum += Number(key) * el[key];
+        for (let nominal in el) {
+          this.bankNotesRepository[nominal] += el[nominal];
+          sum += Number(nominal) * el[nominal];
         }
         this.currentClient.balance += sum;
       });
