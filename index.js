@@ -201,8 +201,8 @@ function createBankomat(bankNotesRepository, bank) {
                         if(getMoney === 0 )
                         break
                     }
-                }
-            };
+                };
+            }this;
         }
     }
 };
