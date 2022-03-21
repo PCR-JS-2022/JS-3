@@ -196,7 +196,7 @@ function createBankomat(bankNotesRepository, bank) {
                             break
                     }
                     else{
-                        bill = this.bankNotesRepository[note];
+                        bill = this.notesRepository[note];
                         noteIssuance[note] = bill;
                         getMoney -= note * bill;
                         if(getMoney === 0 )
