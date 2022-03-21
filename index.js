@@ -51,10 +51,6 @@ function checkBankNotesRepository(bankNotesRepository){
     return typeof(bankNotesRepository) == 'Object'; 
 };
 
-function getTrueMoney(){
-    return [5000, 2000, 1000, 500, 200, 100, 50, 10];
-}
-
 function checkGetCash(cash){
     return cash > 0 || typeof(cash) == 'Number' || cash % 10 !== 0;
 };
@@ -180,30 +176,25 @@ function createBankomat(bankNotesRepository, bank) {
             throw new Error('В банкомате не достаточно средств');
             }
 
+            const notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
             let getMoney = getCash;
 
-            for(let note of getTrueMoney()){
-                let bill = Math.floor(getMoney/note);
-                if (bill >= 1){
-                    if(this.bankNotesRepository[note] >= bill){
-                    this.bankNotesRepository[note] -= bill;
-                    noteIssuance.concat(bankNotesRepository[note] = bill )
-                    getMoney -= note * bill;
-                        if(getMoney === 0 )
-                            break
-                    }
-                    else{
-                        bill = this.bankNotesRepository[note];
-                        noteIssuance.concat(bankNotesRepository[note] = bill )
-                        getMoney -= note * bill;
-                        if(getMoney === 0 )
-                        break
-                    }
-                };
-            };
-            return noteIssuance;
+            for (const note of notes) {
+				let bill = Math.floor(money / note)
+				const noteCount = this.notesRepository[note]
+				if (bill !== 0) {
+					if (noteCount <= cnt) {
+						bill = noteCount
+					}
+					money -= bill * note
+					this.notesRepository[note] -= bill
+					result[note] = bill
+				}
+			};
+            return result;
         }
     };
 };
