@@ -61,8 +61,8 @@ function checkGetCash(cash){
 
 function checkBankomatFulness(){
     let summa = 0
-    for (let note of Object.keys(bankNotesRepository))
-        summa += note * bankNotesRepository[note]
+    for (let note of Object.keys(this.bankNotesRepository))
+        summa += note * this.bankNotesRepository[note]
     return summa;
 };
 
@@ -183,9 +183,7 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
             let getMoney = getCash;
-            notesRepository = this.bankNotesRepository;
-            
-            
+
             for(let note of getTrueMoney()){
                 var bill = Math.floor(getMoney/note);
                 if (bill >= 1){
