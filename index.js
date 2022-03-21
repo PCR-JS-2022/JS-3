@@ -87,7 +87,7 @@ function validateBankomat(bankomat) {
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
 	return validateClient({ name, balance });
 }
 
@@ -98,26 +98,23 @@ function createClient(name, balance) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
 	return validateBank({
 		bankName,
 		clients,
-		addClient: (client) => {
-			if (!(validateClient(client) && this.clients.includes(client))) {
+		addClient: function (client) {
+			if (!validateClient(client) || this.clients.includes(client)) {
 				throw new Error("Not possible to add an existing client");
 			}
 			this.clients.push(client);
 			return true;
 		},
-		removeClient: (client) => {
-			validateClient(client);
-			this.clients.forEach((c, index) => {
-				if (c === client) {
-					this.clients.splice(index, 1);
-					return true;
-				}
-			})
-			throw new Error("Not possible to delete a non-existent client");
+		removeClient: function (client) {
+			if (!validateClient(client) || this.clients.includes(client)) {
+				throw new Error("Not possible to delete a non-existent client");
+			}
+			this.clients = this.clients.filter(c => c !== client);
+			return true;
 		}
 	});
 }
