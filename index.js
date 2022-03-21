@@ -113,7 +113,7 @@ function createBank(bankName, clients = []) {
             if (clients.includes(client)){
                 throw new Error('Такой клиент уже имеется в банке');
             }
-            clients.push(client) 
+            this.clients.push(client) 
             return true;
         },
     
