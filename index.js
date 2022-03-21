@@ -39,7 +39,7 @@ function checkBankName(bankName){
 };
 
 function checkClient(client){
-    return (typeof client !== "object" || checkClientName(client.name) || 
+    return (typeof(client) !== "object" || checkClientName(client.name) || 
     checkBalance(client.balance));
 };
 
@@ -232,5 +232,14 @@ function createBankomat(bankNotesRepository, bank) {
         }
     }
 };
+const redBank = createBank('REDBANK');
+const redBankomat = createBankomat(redBankNotesRepository, redBank);
+const clientVasiliy = createClient('Василий', 10000)
+console.log(clientVasiliy);
+redBank.addClient(clientVasiliy);
+console.log(clients)
+
 
 module.exports = { createClient, createBank, createBankomat };
+
+
