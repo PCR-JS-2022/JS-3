@@ -117,7 +117,7 @@ function createBank(bankName, clients = []) {
             return true;
         },
     
-        removeClient (client) {
+        removeClient(client) {
             if (!checkClient(client)){
                 throw new Error('Входные данные не корректны');
             };
@@ -145,9 +145,8 @@ function createBankomat(bankNotesRepository, bank) {
     return {
         bank,
         bankNotesRepository,
-        currentClient: undefined,
         
-        setClient: client => {
+        setClient(client) {
             if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
@@ -158,15 +157,15 @@ function createBankomat(bankNotesRepository, bank) {
             return true;
         },
         
-        removeClient: () => {
-            if (!this.currentClient === undefined){
+        removeClient() {
+            if (this.currentClient === undefined){
                 throw new Error('Свободная касса!!!');
             }
             this.currentClient = undefined;
             return true;
         },
 
-        addMoney: (...addCash) => {
+        addMoney(...addCash) {
             if (!this.clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
@@ -190,7 +189,7 @@ function createBankomat(bankNotesRepository, bank) {
             }});
         },
 
-        giveMoney: (getCash) => {
+        giveMoney(getCash){
             if (!clients.includes(client)){
                 throw new Error('Вы не являетесь клиентом этого банка');
             }
