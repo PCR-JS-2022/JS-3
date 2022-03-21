@@ -55,7 +55,7 @@ function createBank(bankName, clients = []) {
   return {
     bankName,
     clients,
-    addClient: (newClient) => {
+    addClient: function (newClient) {
       if (this.clients.some((client) => client.name === newClient.name))
         throw new Error(
           `Клиент с таким именем уже существует. [client]=${JSON.stringify(
@@ -67,7 +67,7 @@ function createBank(bankName, clients = []) {
         return true;
       }
     },
-    removeClient: (clientToRemove) => {
+    removeClient: function (clientToRemove) {
       if (this.clients.some((client) => client.name === clientToRemove.name)) {
         this.clients = this.clients.filter(
           (client) => client.name !== clientToRemove.name
@@ -110,7 +110,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
     bank,
     notesRepository: bankNotesRepository,
     currentClient: undefined,
-    setClient: (clientToSet) => {
+    setClient: function (clientToSet) {
       if (
         this.bank.clients.some((client) => client.name === clientToSet.name) &&
         this.currentClient === undefined
@@ -124,11 +124,11 @@ function createBankomat(bankNotesRepository = {}, bank) {
           )}, [client]=${JSON.stringify(clientToSet)}`
         );
     },
-    removeClient: () => {
+    removeClient: function () {
       this.currentClient = undefined;
       return true;
     },
-    addMoney: (...moneysToAdd) => {
+    addMoney: function (...moneysToAdd) {
       if (this.currentClient === undefined)
         throw new Error("С капустой никто не работает");
 
@@ -140,7 +140,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
       });
       return this.addMoney;
     },
-    giveMoney: (sumToGive) => {
+    giveMoney: function (sumToGive) {
       if (sumToGive > this.currentClient.balance)
         throw new Error("Сумма выдачи больше баланса клиента");
       if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
