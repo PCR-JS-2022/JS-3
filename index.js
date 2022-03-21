@@ -155,12 +155,18 @@ function createBankomat(bankNotesRepository = {}, bank) {
       if (this.currentClient === undefined)
         throw new Error("С капустой никто не работает");
 
+      let sum = 0;
+
       moneysToAdd.forEach((moneyToAdd) => {
         nominals.forEach((nominal) => {
-          if (moneyToAdd[nominal] !== undefined)
+          if (moneyToAdd[nominal] !== undefined) {
             this.notesRepository[nominal] += moneyToAdd[nominal];
+            sum += moneyToAdd[nominal] * Number.parseInt(nominal);
+          }
         });
       });
+
+      this.currentClient.balance += sum;
       return this.addMoney;
     },
     giveMoney: function (sumToGive) {
