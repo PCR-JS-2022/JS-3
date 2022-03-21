@@ -121,10 +121,10 @@ function createBank(bankName, clients = []) {
             if (!checkClient(client)){
                 throw new Error('Входные данные не корректны');
             };
-            if (!clients.includes(client) || client == undefined){
+            if (!clients.includes(client)){
                 throw new Error('Такой клиент отсутствует в банке');
             };
-            clients = clients.filter(part => part !== client);
+            this.clients = this.clients.filter(part => part !== client);
             return true;
         }
     };
