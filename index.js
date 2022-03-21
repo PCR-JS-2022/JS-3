@@ -59,12 +59,6 @@ function checkGetCash(cash){
     return cash > 0 || typeof(cash) == 'Number' || cash % 10 !== 0;
 };
 
-function checkBankomatFulness(){
-    let summa = 0
-    for (let note of Object.keys(this.bankNotesRepository))
-        summa += note * this.bankNotesRepository[note]
-    return summa;
-};
 
 /**
  * @name createClient
@@ -170,14 +164,19 @@ function createBankomat(bankNotesRepository, bank) {
         giveMoney(getCash){
             if (!checkGetCash(getCash)){
                 throw new Error('Введите сумму списания кратную 10');
-            }
+            };
             if(this.currentClient === undefined){
                 throw new Error('Выполните вход в систему');
-            }
+            };
             if(!this.currentClient.balance > getCash){
                 throw new Error('Недостаточно средств на балансе');
-            }
-            if(!checkBankomatFulness() > getCash){
+            };
+
+            let summa = 0
+            for (let note of Object.keys(this.bankNotesRepository))
+                summa = summa + note * this.bankNotesRepository[note]
+        
+            if( summa > getCash){
             throw new Error('В банкомате не достаточно средств');
             }
             this.currentClient.balance -= getCash;
@@ -187,15 +186,15 @@ function createBankomat(bankNotesRepository, bank) {
             for(let note of getTrueMoney()){
                 var bill = Math.floor(getMoney/note);
                 if (bill >= 1){
-                    if(this.notesRepository[note] >= bill){
-                    this.notesRepository[note] -= bill;
+                    if(this.bankNotesRepository[note] >= bill){
+                    this.bankNotesRepository[note] -= bill;
                     noteIssuance[note] = bill;
                     getMoney -= note * bill;
                         if(getMoney === 0 )
                             break
                     }
                     else{
-                        bill = this.notesRepository[note];
+                        bill = this.bankNotesRepository[note];
                         noteIssuance[note] = bill;
                         getMoney -= note * bill;
                         if(getMoney === 0 )
