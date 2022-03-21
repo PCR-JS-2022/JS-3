@@ -36,7 +36,7 @@
 
 function createClient(name, balance = 0) {
     if(!checkClientName(name) || !checkBalance(balance))
-        throw new UserException('Входные данные не корректны');
+        throw new Error('Входные данные не корректны');
         
     return {name, balance};   
 };
@@ -49,16 +49,64 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 
+ function checkClientName(name){
+    return typeof(name) == 'string';
+};
+
+function checkBalance(balance){
+    return typeof(balance) == 'number';
+};
+
+function checkBankName(bankName){
+    return typeof(bankName) == 'string' && bankName !== undefined;
+};
+
+function checkClientsObject(clients){
+    return typeof(clients) == 'object' && clients !== undefined;
+};
+
+function checkBank(bank){
+    return typeof(bank) == 'object' && typeof(Object.entries(bank)) == 'Object';
+};
+
+function checkBankNotesRepository(bankNotesRepository){
+    return typeof(bankNotesRepository) == 'Object'; 
+};
+
+function checkAddMoney(addMoney){
+    const trueMoney = [5000, 2000, 1000, 500, 200, 100, 50, 10]
+
+    return typeof(addMoney) == 'Object' &&
+        addMoney.length > 0 && 
+        Object.keys(addMoney).forEach(element => {
+            trueMoney.includes(element)  
+        });
+};
+
+function getTrueMoney(){
+    return [5000, 2000, 1000, 500, 200, 100, 50, 10];
+}
+
+function checkGetCash(cash){
+    return cash > 0 && typeof(cash) == 'Number' || cash % 10 !== 0;
+};
+
+function checkBankomatFulness(){
+    let summa = 0
+    for (let note of Object.keys(bankNotesRepository))
+        summa += note * bankNotesRepository[note]
+    return summa;
+};
+
 function createBank(bankName, clients = []) {
     if (!checkBankName(bankName) && !checkClientsObject(clients))
-        throw new UserException('Входные данные не корректны');
+        throw new Error('Входные данные не корректны');
     
     return {
         bankName,
         clients,
         addClient: client => {
-            if (!checkClientsObject(clients) && !checkClientName(client.name)&&
-            !checkBalance(client.balance)) 
+            if (!checkClientsObject(clients)) 
                 throw new Error('Входные данные не корректны');
 
             if (clients.includes(client))
@@ -70,10 +118,10 @@ function createBank(bankName, clients = []) {
     
         removeClient: client => {
             if (!checkClientsObject(client))
-                throw new UserException('Входные данные не корректны');
+                throw new Error('Входные данные не корректны');
             
             if (clients.includes(client))
-                throw new UserException('Такой клиент отсутствует в банке');
+                throw new Error('Такой клиент отсутствует в банке');
             
             clients = clients.filter(!client);
             return true;
@@ -91,7 +139,7 @@ function createBank(bankName, clients = []) {
 
 function createBankomat(bankNotesRepository, bank) {
     if (!checkBank(bank) && !checkBankNotesRepository(bankNotesRepository))
-        throw new UserException('Входные данные не корректны');
+        throw new Error('Входные данные не корректны');
     
     return {
         bank,
@@ -100,10 +148,10 @@ function createBankomat(bankNotesRepository, bank) {
         
         setClient: client => {
             if (!this.clients.includes(client))
-                throw new UserException('Вы не являетесь клиентом этого банка');
+                throw new Error('Вы не являетесь клиентом этого банка');
 
             if (!this.currentClient === undefined)
-                throw new UserException('Банк занят другим пользователем');
+                throw new Error('Банк занят другим пользователем');
             
             this.currentClient = client;
             return true;
@@ -111,7 +159,7 @@ function createBankomat(bankNotesRepository, bank) {
         
         removeClient: () => {
             if (!this.currentClient === undefined)
-                throw new UserException('Свободная касса!!!');
+                throw new Error('Свободная касса!!!');
             
             this.currentClient = undefined;
             return true;
@@ -119,13 +167,13 @@ function createBankomat(bankNotesRepository, bank) {
 
         addMoney: (...addCash) => {
             if (!this.clients.includes(client))
-                throw new UserException('Вы не являетесь клиентом этого банка');
+                throw new Error('Вы не являетесь клиентом этого банка');
 
             if (!checkAddMoney(addMoney))
-                throw new UserException('Входные данные не корректны');
+                throw new Error('Входные данные не корректны');
 
             if (this.currentClient === undefined)
-                throw new UserException('Клиент не выбран');
+                throw new Error('Клиент не выбран');
             
             addCash.forEach(part => {
                 for (let element of Object.entries(part)){
@@ -143,19 +191,19 @@ function createBankomat(bankNotesRepository, bank) {
 
         giveMoney: (getCash) => {
             if (!clients.includes(client))
-                throw new UserException('Вы не являетесь клиентом этого банка');
+                throw new Error('Вы не являетесь клиентом этого банка');
 
             if (!checkGetCash(getCash))
-                throw new UserException('Введите сумму списания кратную 10');
+                throw new Error('Введите сумму списания кратную 10');
 
             if(!this.currentClient)
-                throw new UserException('Выполните вход в систему');
+                throw new Error('Выполните вход в систему');
 
             if(!this.currentClient.balance > getCash)
-                throw new UserException('Недостаточно средств на балансе');
+                throw new Error('Недостаточно средств на балансе');
 
             if(!checkBankomatFulness() > getCash)
-            throw new UserException('В банкомате не достаточно средств');
+            throw new Error('В банкомате не достаточно средств');
 
             this.currentClient.balance -= getCash;
             let noteIssuance = {};
@@ -183,57 +231,5 @@ function createBankomat(bankNotesRepository, bank) {
         }
     }
 };
-
-
-
-    function checkClientName(name){
-        return typeof(name) == 'string';
-    };
-
-    function checkBalance(balance){
-        return typeof(balance) == 'number';
-    };
-
-    function checkBankName(bankName){
-        return typeof(bankName) == 'string';
-    };
-
-    function checkClientsObject(client){
-        return typeof(client) == 'object';
-    };
-
-    function checkBank(bank){
-        return typeof(bank) == 'object' && typeof(Object.entries(bank)) == 'Object';
-    };
-
-    function checkBankNotesRepository(bankNotesRepository){
-        return typeof(bankNotesRepository) == 'Object'; 
-    };
-
-    function checkAddMoney(addMoney){
-        const trueMoney = [5000, 2000, 1000, 500, 200, 100, 50, 10]
-
-        return typeof(addMoney) == 'Object' &&
-            addMoney.length > 0 && 
-            Object.keys(addMoney).forEach(element => {
-                trueMoney.includes(element)  
-            });
-    };
-
-    function getTrueMoney(){
-        return [5000, 2000, 1000, 500, 200, 100, 50, 10];
-    }
-
-    function checkGetCash(cash){
-        return cash > 0 && typeof(cash) == 'Number' || cash % 10 !== 0;
-    };
-
-    function checkBankomatFulness(){
-        let summa = 0
-        for (let note of Object.keys(bankNotesRepository))
-            summa += note * bankNotesRepository[note]
-        return summa;
-    };
-  
 
 module.exports = { createClient, createBank, createBankomat };
