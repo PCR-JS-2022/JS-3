@@ -176,7 +176,7 @@ function createBankomat(bankNotesRepository, bank) {
             let getMoney = getCash;
 
             for (const note of notes) {
-				let bill = Math.floor(money / note);
+				let bill = Math.floor(getMoney / note);
 				const noteCount = this.notesRepository[note];
 				if (bill !== 0) {
 					if (noteCount <= bill) {
