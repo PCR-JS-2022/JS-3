@@ -121,7 +121,7 @@ function createBank(bankName, clients = []) {
             if (!checkClient(client)){
                 throw new Error('Входные данные не корректны');
             }
-            if (clients.includes(client)){
+            if (!clients.includes(client)){
                 throw new Error('Такой клиент отсутствует в банке');
             }
             clients = clients.filter(!client);
