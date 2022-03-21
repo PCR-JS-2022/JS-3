@@ -154,7 +154,7 @@ function createBankomat(bankNotesRepository, bank) {
             return true;
         },
 
-        addMoney: function addCash (...args) {
+        addMoney: function (...args) {
             if (!this.currentClient) {
               throw new Error('Клиент не выбран');
             }
@@ -163,7 +163,7 @@ function createBankomat(bankNotesRepository, bank) {
                 this.notesRepository[banknote] += count;
                 this.currentClient.balance += banknote * count;
               });
-            return this.addCash.bind(this)
+            return this.addMoney.bind(this)
             });
             
           },
