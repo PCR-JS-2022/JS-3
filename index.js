@@ -34,18 +34,17 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-  return { name: checkName(name), balance: checkBalance(balance) };
+  if (!checkName(name) || !checkBalance(balance))
+    throw "Error when creating client";
+  return { name, balance };
 }
 
 function checkName(name) {
-  if (typeof name == "string") return name;
-  throw "Incorrect name for client";
+  return typeof name == "string";
 }
 
 function checkBalance(balance) {
-  if (typeof balance == "number" && Number.isFinite(balance))
-    return balance;
-  throw "Incorrect balance value";
+  return typeof balance == "number" && Number.isFinite(balance);
 }
 
 /**
@@ -56,9 +55,12 @@ function checkBalance(balance) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
+  if (!checkName(bankName) || !checkClientsList(clients))
+    throw "Error when creating bank";
+
   return {
-    bankName: checkName(bankName),
-    clients: checkClientsList(clients),
+    bankName: bankName,
+    clients: clients,
 
     addClient(client) {
       if (!isClient(client)) return false;
@@ -81,11 +83,9 @@ function createBank(bankName, clients = []) {
 }
 
 function checkClientsList(list) {
-  if (!Array.isArray(list)) throw "Wrong clients list format";
-  if (list.length > 0 && !list.every((x) => isClient(x))) {
-    throw "Wrong clients list format";
-  }
-  return list;
+  if (!Array.isArray(list)) return false;
+  if (list.length > 0) return list.every((x) => isClient(x));
+  return true;
 }
 
 function isClient(client) {
@@ -103,9 +103,11 @@ function isClient(client) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
+  if (!checkRepository(bankNotesRepository) || !isBank(bank))
+    throw "Error when creating bankomat";
   return {
     bankNotesRepository: bankNotesRepository,
-    bank: isBank(bank),
+    bank: bank,
     currentClient: undefined,
 
     setClient(client) {
@@ -186,8 +188,7 @@ function createBankomat(bankNotesRepository, bank) {
 }
 
 function checkRepository(rep) {
-  if (typeof rep != "object") throw "Wrong repository format";
-  return rep;
+  return typeof rep == "object";
 }
 
 /*
@@ -205,14 +206,10 @@ function curry(func) {
 */
 
 function isBank(bank) {
-  if (typeof bank != "object") throw "Wrong bank format";
-  if (typeof bank.bankName != "string" || !Array.isArray(bank.clients)) {
-    throw "Wrong bank format";
-  }
-  if (bank.clients.length > 0 && !bank.clients.every((x) => isClient(x))) {
-    throw "Wrong bank format";
-  }
-  return bank;
+  if (typeof bank != "object") return false;
+  if (typeof bank.bankName != "string" || !Array.isArray(bank.clients)) return false;
+  if (bank.clients.length > 0) return bank.clients.every((x) => isClient(x));
+  return true;
 }
 
 function isFromBank(client, bank) {
@@ -298,3 +295,7 @@ greenBankBankomat.giveMoney(1000);
  */
 
 greenBankBankomat.removeClient(); // true
+
+//createClient();
+//createBank();
+//createBankomat();
