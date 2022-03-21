@@ -51,16 +51,6 @@ function checkBankNotesRepository(bankNotesRepository){
     return typeof(bankNotesRepository) == 'Object'; 
 };
 
-function checkAddMoney(addMoney){
-    const trueMoney = [5000, 2000, 1000, 500, 200, 100, 50, 10]
-
-    return typeof(addMoney) == 'Object' &&
-        addMoney.length > 0 && 
-        Object.keys(addMoney).forEach(element => {
-            trueMoney.includes(element)  
-        });
-};
-
 function getTrueMoney(){
     return [5000, 2000, 1000, 500, 200, 100, 50, 10];
 }
@@ -165,9 +155,6 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         addMoney(...addCash){
-            if (!checkAddMoney(addMoney)){
-                throw new Error('Входные данные не корректны');
-            }
             if (this.currentClient){
                 throw new Error('Клиент не выбран');
             }
