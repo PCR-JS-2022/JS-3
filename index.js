@@ -182,7 +182,7 @@ function createBankomat(bankNotesRepository, bank) {
 					if (noteCount <= bill) {
 						bill = noteCount;
 					}
-					getmoney -= bill * note;
+					getMoney -= bill * note;
 					this.notesRepository[note] -= bill;
 					noteIssuance[note] = bill;
 				}
