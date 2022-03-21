@@ -105,7 +105,7 @@ function createBankomat(bankNotesRepository, bank) {
         notesRepository: bankNotesRepository,
         currentClient: undefined,
         setClient: function(client) {
-            if(!isClient(client) || bank.clients.some(e => e.name === client.name)
+            if(!isClient(client) || !this.bank.clients.some(e => e.name === client.name)
                 || this.currentClient !== undefined) {
                 throw new Error();
             }
