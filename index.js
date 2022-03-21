@@ -168,9 +168,6 @@ function createBankomat(bankNotesRepository, bank) {
           },
 
         giveMoney(getCash){
-            if (!this.bank.clients.includes(client)){
-                throw new Error('Вы не являетесь клиентом этого банка');
-            }
             if (!checkGetCash(getCash)){
                 throw new Error('Введите сумму списания кратную 10');
             }
