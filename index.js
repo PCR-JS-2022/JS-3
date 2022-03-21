@@ -142,10 +142,10 @@ function createBankomat(bankNotesRepository, bank) {
                 notesRepository[e] -= integerDiveder;
                 notesSum -= e * integerDiveder;
             });
-            console.log(notesRepository);
-            if (isEmptyObject(resultObject)) {
+            if (isEmptyObject(resultObject) || notesSum > 0) {
                 throw new Error('У банкомата нет необходимых купюр для выдачи данной суммы.');
             }
+            if (notesSum)
             return resultObject;
         }
     }
@@ -171,16 +171,5 @@ function isEmptyObject(obj) {
     }
     return true;
 }
-
-const notesRepository = {
-    5000: 3,
-    2000: 0,
-    1000: 3,
-    500: 5,
-    200: 0,
-    100: 0,
-    50: 5,
-    10: 5,
-};
 
 module.exports = { createClient, createBank, createBankomat };
