@@ -171,6 +171,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
       return this.addMoney;
     },
     giveMoney: function (sumToGive) {
+      if (this === undefined) throw new Error("Я хз, почему я undefined");
       if (this.currentClient === undefined)
         throw new Error("С капустой никто не работает");
       if (sumToGive > this.currentClient.balance)
