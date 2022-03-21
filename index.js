@@ -157,14 +157,14 @@ function createBankomat(bankNotesRepository, bank) {
         addMoney (...args) {
             if (!this.currentClient) {
               throw new Error('Клиент не выбран');
-            }
+            };
             for (let part of args) {
                 for (let bill of part) {
                     this.notesRepository[bill] += part[bill];
                     this.currentClient.balance += part[bill] * bill;
                 };
             };
-            return this.addMoney.bind(this)
+            return this.addMoney.bind(this);
           },
 
         giveMoney(getCash){
