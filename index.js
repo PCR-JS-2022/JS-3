@@ -155,7 +155,7 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         addMoney(...addCash){
-            if (this.currentClient){
+            if (this.currentClient === undefined){
                 throw new Error('Клиент не выбран');
             }
             addCash.forEach(part => {
