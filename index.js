@@ -51,11 +51,6 @@ function checkBankNotesRepository(bankNotesRepository){
     return typeof(bankNotesRepository) == 'Object'; 
 };
 
-function checkGetCash(cash){
-    return typeof(cash) == 'Number' || (cash % 10) !== 0;
-};
-
-
 /**
  * @name createClient
  * @description Функция для создания клиента
@@ -158,7 +153,7 @@ function createBankomat(bankNotesRepository, bank) {
           },
 
         giveMoney(getCash){
-            if (!checkGetCash(getCash)){
+            if (!typeof(getCash) == 'Number' || (getCash % 10) !== 0){
                 throw new Error('Введите сумму списания кратную 10');
             };
             if(this.currentClient === undefined){
