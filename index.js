@@ -58,6 +58,14 @@ function correctStr(name) {
     return (typeof name === 'string' && name.length !== 0);
 }
 
+function addStorage(money, client, storage) {
+    for (let key in money) {
+        storage[key] = money[key];
+        client += key * money[key];
+    }
+
+}
+
 function correctInt(balance) {
     return typeof balance === 'number';
 }
@@ -66,8 +74,8 @@ function correctObj(obj) {
     return (typeof obj === 'object');
 }
 
-function correctMoney(money){
-    for (let key in money){
+function correctMoney(money) {
+    for (let key in money) {
         if (!correctBanknote(key)) {
             return false
         }
@@ -77,11 +85,11 @@ function correctMoney(money){
 
 function correctBanknote(key) {
     let flag = false
-    for(let i = 0; i < banknote.length; i++){
+    for (let i = 0; i < banknote.length; i++) {
         if (banknote[i] === +key) {
             flag = true;
         }
-            
+
     }
     return flag
 }
@@ -201,11 +209,16 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Клиента не использует банкомат')
             }
 
+            const storage = this.bankNotesRepository;
+            const client = this.currentClient.balance;
+            addStorage(money, client, storage);
+
 
             let sum = sumMoney(money);
 
             function f(b) {
                 sum += sumMoney(b);
+                addStorage(b, client, storage);
                 return f;
             }
 
@@ -270,8 +283,6 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient.balance -= money;
             return storage;
         }
-
-
     };
 }
 
