@@ -164,7 +164,7 @@ function createBankomat(bankNotesRepository, bank) {
             if(this.currentClient === undefined){
                 throw new Error('Выполните вход в систему');
             };
-            if(!this.currentClient.balance > getCash){
+            if(this.currentClient.balance < getCash){
                 throw new Error('Недостаточно средств на балансе');
             };
 
@@ -172,7 +172,7 @@ function createBankomat(bankNotesRepository, bank) {
             for (let note of Object.keys(this.bankNotesRepository))
                 summa = summa + note * this.bankNotesRepository[note]
         
-            if( summa > getCash){
+            if( summa < getCash){
             throw new Error('В банкомате не достаточно средств');
             }
 
