@@ -66,6 +66,15 @@ function correctObj(obj) {
     return (typeof obj === 'object');
 }
 
+function correctMoney(money){
+    for (let key in money){
+        if (!correctBanknote(key)) {
+            return false
+        }
+    }
+    return true;
+}
+
 function correctBanknote(key) {
     banknote.forEach(element => {
         if (element === key) {
@@ -183,13 +192,14 @@ function createBankomat(bankNotesRepository, bank) {
         },
 
         addMoney: function (money) {
-            if (!correctObj(money)) {
+            if (!correctObj(money) && !correctMoney(money)) {
                 throw new Error('Некорректные данные');
             }
 
             if (this.currentClient === undefined) {
                 throw new Error('Клиента не использует банкомат')
             }
+
 
             let sum = sumMoney(money);
 
@@ -206,7 +216,7 @@ function createBankomat(bankNotesRepository, bank) {
 
         giveMoney: function (money) {
             if (this.currentClient === undefined) {
-                throw new Error('Клиента не использует банкомат')
+                throw new Error('Клиент не использует банкомат')
             }
 
             if (this.currentClient.balance < money) {
