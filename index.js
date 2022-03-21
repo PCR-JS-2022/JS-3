@@ -127,7 +127,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
       )}, [bank]=${JSON.stringify(bank)}`
     );
 
-  const nominals = [10, 50, 100, 200, 500, 1000, 2000, 5000].reverse();
+  const nominals = ["5000", "2000", "1000", "500", "200", "100", "50", "10"];
 
   return {
     bank,
@@ -172,12 +172,14 @@ function createBankomat(bankNotesRepository = {}, bank) {
 
       const moneyToGive = {};
       nominals.forEach((nominal) => {
-        if (sumToGive === 0 || nominal > sumToGive) return;
+        const nominalNumber = Number.parseInt(nominal);
+
+        if (sumToGive === 0 || nominalNumber > sumToGive) return;
         const count = Math.min(
-          Math.trunc(sumToGive / nominal),
+          Math.trunc(sumToGive / nominalNumber),
           this.notesRepository[nominal]
         );
-        sumToGive -= nominal * count;
+        sumToGive -= nominalNumber * count;
         this.notesRepository[nominal] -= count;
         moneyToGive[nominal] = count;
       });
