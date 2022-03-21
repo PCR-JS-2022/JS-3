@@ -27,13 +27,15 @@
  */
 
 /**
- * Словарь со всеми возможнными банкнотами
+ * Все возможные банкноты
+ * @type {number[]}
  */
-const bankNotesDictionary = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+
 /**
  * Check: is variable client or not
  * Проверить: переданная переменная является клиентом или нет
- * @param {object} client 
+ * @param {object} client
  * @returns {boolean}
  */
 function isClient(client) {
@@ -46,7 +48,7 @@ function isClient(client) {
  * Check: is variable bank or not
  * Проверить: переданная переменная является банком или нет
  * @param {object} bank
- * @returns {boolean} 
+ * @returns {boolean}
  */
 function isBank(bank) {
     return (typeof bank === 'object') &&
@@ -60,7 +62,7 @@ function isBank(bank) {
  * Check: is variable bankNotesRepository or not
  * Проверить: переданная переменная является объектом хранилища купюр или нет
  * @param {object} bankNotesRepository
- * @returns {boolean} 
+ * @returns {boolean}
  */
 function isBankNotesRepository(bankNotesRepository) {
     return (typeof bankNotesRepository === 'object');
@@ -100,16 +102,11 @@ function createBank(bankName, clients = []) {
         bankName: bankName,
         clients: clients,
         addClient: function (client) {
-            if (!isClient(client)) {
+            if (!isClient(client) || this.clients.some((clientBank) => clientBank === client)) {
                 throw new Error('Не удалось добавить клиента!');
             }
-            const findClient = this.clients.includes(client);
-            if (!findClient) {
-                this.clients.push(client);
-                return true;
-            } else {
-                throw new Error('Не удалось добавить клиента!');
-            }
+            this.clients.push(client);
+            return true;
         },
         removeClient: function (client) {
             if (!isClient(client) || !this.clients.some((clientBank) => clientBank === client)) {
@@ -138,37 +135,37 @@ function createBankomat(bankNotesRepository, bank) {
         currentClient: undefined,
 
         setClient: function (client) {
-            if (isClient(client) && bank.clients.includes(client) && this.currentClient === undefined) {
-                this.currentClient = client;
-                return true;
-            } else {
-                throw new Error('Произошла ошибка при установке клиента!');
+            if (!isClient(client)) {
+                throw new Error('Передан не клиент!');
             }
+            if (this.currentClient !== undefined) {
+                throw new Error('Банкомат занят работой с другим клиентом!');
+            }
+            if (this.bank.clients.some((clientBank) => clientBank !== client)) {
+                throw new Error('Клиент не является клиентом банка!');
+            }
+            this.currentClient = client;
+            return true;
         },
-        removeClient: function (client) {
-            if (isClient(client) && bank.clients.includes(client) && this.currentClient === client) {
-                this.currentClient = undefined;
-                return true;
-            } else {
-                throw new Error('Произошла ошибка при удалении клиента!');
-            }
+        removeClient: function () {
+            this.currentClient = undefined;
+            return true;
         },
         addMoney: function (...bankNotesRepositories) {
             if (this.currentClient === undefined) {
-                throw new Error('Ошибка: отсутствует клиент!');
+                throw new Error('Отсутствует клиент!');
             }
             let clientBankNotesSum = 0;
-            for (let bankNotesRepository of bankNotesDictionary) {
-                this.notesRepository[bankNotesRepository] = 0;
-            }
             for (let bankNotesRepository of bankNotesRepositories) {
                 if (!isBankNotesRepository(bankNotesRepository)) {
-                    throw new Error("Ошибка: передано не хранилище банкнот! ");
+                    throw new Error('Передано не хранилище банкнот!');
                 }
-                this.notesRepository[bankNotesRepository.keys()[0]] += bankNotesRepository[bankNotesRepository.keys()[0]];
-                clientBankNotesSum += number(bankNotesRepository[bankNotesRepository.keys()[0]]);
+                for (const bankNote in bankNotesRepository) {
+                    this.notesRepository[bankNote] += Number(bankNotesRepository[bankNote]);
+                    clientBankNotesSum += Number(Number(bankNote) * bankNotesRepository[bankNote]);
+                }
             }
-            this.currentClient.balance += clientBankNotesSum;
+            this.currentClient.balance += Number(clientBankNotesSum);
 
             return this.addMoney.bind(this);
         },
@@ -176,34 +173,34 @@ function createBankomat(bankNotesRepository, bank) {
             if (this.currentClient === undefined) {
                 throw new Error("Ошибка: отсутствует клиент!");
             }
-            if (typeof sumToGive !== number || number(sumToGive) < 0) {
+            if (typeof sumToGive !== "number" || Number(sumToGive) < 0) {
                 throw new Error("Передана невалидная сумма!");
             }
-            if (number(sumToGive) > this.currentClient.balance) {
+            if (Number(sumToGive) > this.currentClient.balance) {
                 throw new Error('На вашем счёте не достаточно денег для снятия!');
             }
             let sumToGiveClient = sumToGive;
-            const resultAsnwer = {};
-            for (let bankNote of bankNotesDictionary) {
-                if (sumToGiveClient <= 0) {
-                    break;
+            const resultAnswer = {};
+            for (const banknote of banknotes) {
+                let remainder = Math.floor(sumToGiveClient / banknote);
+                if (remainder === 0) {
+                    continue;
                 }
-                let remainder = (Math.floor(number(sumToGiveClient) / bankNote));
-                if (remainder >= this.notesRepository[bankNote]) {
-                    resultAsnwer[bankNote] += this.notesRepository[bankNote];
-                    sumToGiveClient -= number(bankNote) * this.notesRepository[bankNote];
-                } else if (remainder < this.notesRepository[bankNote] && remainder > 0) {
-                    resultAsnwer[bankNote] += remainder;
-                    sumToGiveClient -= number(bankNote) * remainder;
+                if (remainder <= this.notesRepository[banknote]) {
+                    this.notesRepository[banknote] -= remainder;
+                    sumToGiveClient -= banknote * remainder;
+                    resultAnswer[banknote] = remainder;
                 }
             }
-            this.currentClient.balance -= number(sumToGive);
 
-            return resultAsnwer;
+            if (sumToGiveClient > 0) {
+                throw new Error('В банкомате недостаточно средств!');
+            }
+            this.currentClient.balance -= sumToGiveClient;
+            return resultAnswer;
         }
     };
 }
-
 
 module.exports = {
     createClient,
