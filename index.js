@@ -150,7 +150,7 @@ function createBankomat(bankNotesRepository, bank) {
             };
             green.forEach((lettice) => {
                 Object.entries(lettice)
-                    .every(([bankNote, qty]) => {
+                    .foreach(([bankNote, qty]) => {
                         this.notesRepository[bankNote] += qty;
                         this.currentClient.balance += bankNote * qty;
                     })
