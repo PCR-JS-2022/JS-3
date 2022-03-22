@@ -153,7 +153,7 @@ function createBankomat(bankNotesRepository, bank) {
         },
         addMoney(...moooney) {
             const noCustomer = new Error('Клиента нет')
-            if (this.currentClient !== undefined || !moooney.length) {
+            if (this.currentClient === undefined || !moooney.length) {
                 throw noCustomer;
             }
             for (const moneyObj of moooney) {
