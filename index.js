@@ -26,6 +26,20 @@
  * @property {(sumToGive: number) => boolean | Error} giveMoney
  */
 
+function checkClient(client) {
+    return !client instanceof Object ||
+    !client.hasOwnProperty('name') || !client.name instanceof String || !client.name ||
+    !client.hasOwnProperty('balance') || !client.balance instanceof Number;
+}
+
+function checkBank(bank) {
+    return bank instanceof Object &&
+    bank.hasOwnProperty('bankName') && bank.bankName instanceof String && bank.bankName &&
+    bank.hasOwnProperty('clients') && bank.clients instanceof Array &&
+    bank.hasOwnProperty('addClient') &&
+    bank.hasOwnProperty('removeClient');
+}
+
 /**
  * @name createClient
  * @description Функция для создания клиента
@@ -33,7 +47,12 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) {}
+function createClient(name, balance = 0) {
+    if (!name instanceof String || !name ||  isNaN(balance)) {
+        throw new Error('Ошибка "createClient"');
+    }
+    return {name, balance};
+}
 
 /**
  * @name createBank
@@ -42,7 +61,29 @@ function createClient(name, balance) {}
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {}
+function createBank(bankName, clients = []) {
+    if (!bankName instanceof String || !bankName || !clients instanceof Array)
+    return {
+        bankName,
+        clients,
+        addClient: function addClient(client) {
+            if (checkClient(client) ||
+                this.clients.includes(client)) {
+                throw new Error('Ошибка "addClient"');
+            }
+            this.clients.push(client);
+            return true;
+        },
+        removeClient: function removeClient(client) {
+            if (checkClient(client) ||
+                !this.clients.includes(client)) {
+                throw new Error('Ошибка "removeClient"');
+            }
+            this.clients = this.clients.filter(x => x !== client);
+            return true;
+        },
+    }
+}
 
 /**
  * @name createBankomat
@@ -51,6 +92,68 @@ function createBank(bankName, clients) {}
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {}
+function createBankomat(bankNotesRepository, bank) {
+    if(!checkBank(bank) ||
+    !bankNotesRepository instanceof Object || !bankNotesRepository){
+        throw new Error('Ошибка createBankomat');
+    }
+    return {
+        bank,
+        notesRepository: bankNotesRepository,
+        currentClient: undefined,
+        setClient: function setClient(client) {
+            if (checkClient(client) || this.currentClient || !this.bank.clients.includes(client))
+                throw new Error('Ошибка "setClient"');
+            return true;
+        },
+        removeClient: function removeClient() {
+            this.currentClient = undefined;
+            return true;
+        },
+        addMoney: function addMoney(...moneyPool) {
+            if(!this.currentClient){
+                throw new Error('Клиент не найден');
+            }
+            for (const money of moneyPool)
+                for (const value in money) {
+                    this.notesRepository[value] += money[value];
+                    this.currentClient.balance += money[value] * value;
+                }
+            return this.addMoney.bind(this);
+        },
+        giveMoney: function giveMoney(money) {
+            if(!this.currentClient){
+                throw new Error('Клиент не найден');
+            }
+            if (money % 10 !== 0) {
+                throw new Error('Невозможно выдать сумму не кратную 10');
+            }
+            if (this.currentClient.balance < money) {
+                throw new Error('На счёте недостаточно денежных средств');
+            }
+            const values = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+            let moneyToGive = money;
+            const notesToGive = values.reduce((notesToGive, value) => {
+                let banknotesNeeded = Math.floor(moneyToGive / value);
+                const keepingNotes = this.notesRepository[value];
+                if (banknotesNeeded === 0){
+                    return notesToGive;
+                }
+                if (keepingNotes < banknotesNeeded){
+                    banknotesNeeded = keepingNotes;
+                }
+                moneyToGive -= banknotesNeeded * value;
+                this.notesRepository[value] -= banknotesNeeded;
+                notesToGive[value] = banknotesNeeded;
+                return notesToGive;
+            });
+            if(moneyToGive > 0){
+                throw new Error('Недостаточно купюр в банкомате');
+            }
+            this.currentClient.balance -= money;
+            return notesToGive;
+        }
+    }
+}
 
 module.exports = { createClient, createBank, createBankomat };
