@@ -35,7 +35,7 @@ function checkClient(client) {
 function checkBank(bank) {
     return typeof bank === 'object' &&
     bank.hasOwnProperty('bankName') && typeof bank.bankName === 'string' && bank.bankName &&
-    bank.hasOwnProperty('clients') && typeof bank.clients === 'array' &&
+    bank.hasOwnProperty('clients') && Array.isArray(bank.clients) &&
     bank.hasOwnProperty('addClient') &&
     bank.hasOwnProperty('removeClient');
 }
@@ -62,7 +62,7 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
-    if (typeof bankName != 'string' || !bankName || typeof clients != 'array')
+    if (typeof bankName != 'string' || !bankName || !Array.isArray(client))
     return {
         bankName,
         clients,
