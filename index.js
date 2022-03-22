@@ -53,18 +53,25 @@ function createBank(bankName, clients= []) {
             clients,
 
             addClient(client) {
-                if (!this.clients.find(elem => elem.name === client.name)) {
+                if (!this.clients.find(elem => elem.name === client.name) && this.isValidClient(client)) {
                     clients.push(client);
                     return true
                 } else throw new Error("Клиент не найден")
             },
 
             removeClient(client) {
-                const newArray = this.clients.filter(elem => elem.name !== client.name);
-                if (JSON.stringify(this.clients) !== JSON.stringify(newArray)) {
-                    this.clients = newArray;
-                    return true
+                if (this.isValidClient(client)) {
+                    const newArray = this.clients.filter(elem => elem.name !== client.name);
+                    if (JSON.stringify(this.clients) !== JSON.stringify(newArray)) {
+                        this.clients = newArray;
+                        return true
+                    }
                 } else throw new Error("Клиент не удален")
+            },
+
+            isValidClient(client) {
+                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
+                && typeof client.name === "string" && typeof client.balance === "number")
             }
         }
     } else throw new Error("Ошибка создания банка");
