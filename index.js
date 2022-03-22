@@ -113,7 +113,8 @@ function createBankomat(bankNotesRepository, bank) {
                             this.currentClient.balance += i * banknote[i];
                         }
                     })
-                } else throw new Error("Деньги не зачислены")
+                } else throw new Error("Деньги не зачислены");
+                return this.addMoney.bind(this);
             },
 
             giveMoney(sum) {
