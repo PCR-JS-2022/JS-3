@@ -34,8 +34,6 @@
  * @returns {Client} Объект клиента
  */
 
-notes = [5000, 2000, 1000, 500, 200, 100, 50, 10]
-
 function createClient(name, balance) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error();
@@ -46,6 +44,9 @@ function createClient(name, balance) {
     }
 }
 
+function isValidClient(client) {
+    return (client.hasOwnProperty('balance') && client.hasOwnProperty('name'));
+}
 /**
  * @name createBank
  * @description Функция для создания банка
@@ -61,23 +62,22 @@ function createBank(bankName, clients) {
         bankName: bankName,
         clients: clients || [],
         addClient(person) {
-            // if (
-            //     // !person instanceof Client ||
-            //     clients
-            //     || clients.includes(person)) throw new Error();
+            if (!isValidClient(person) || this.clients.includes(person)) throw new Error();
             this.clients.push(person);
             return true;
         },
         removeClient(person) {
-            if (
-                // !person instanceof Client ||
-                !clients.includes(person)) throw new Error();
+            if (!this.clients.includes(person)) throw new Error();
             this.clients = this.clients.filter(client => client !== person);
             return true;
         }
     }
 }
 
+function isValidBank(bank) {
+    return (bank.hasOwnProperty('bankName') && bank.hasOwnProperty('clients')
+        && bank.hasOwnProperty('addClient') && bank.hasOwnProperty('removeClient'));
+}
 /**
  * @name createBankomat
  * @description Фукнция для создания банкомата
@@ -86,7 +86,7 @@ function createBank(bankName, clients) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
-    if (typeof bankNotesRepository !== 'object' || !bank instanceof Object) {
+    if (typeof bankNotesRepository !== 'object' || !isValidBank(bank)) {
         throw new Error();
     }
     return {
@@ -99,17 +99,14 @@ function createBankomat(bankNotesRepository, bank) {
             return true
         },
         removeClient() {
-            if (!this.currentClient) throw new Error();
             this.currentClient = undefined;
             return true;
         },
         addMoney(...banknotes) {
-            if (!this.currentClient || banknotes.length === 0)
-                throw new Error();
-
+            if (!this.currentClient || banknotes.length === 0) throw new Error();
             for (const notes of banknotes) {
                 for (const note in notes) {
-                    this.notesRepository[notes] += notes[note];
+                    this.notesRepository[note] += notes[note];
                     this.currentClient.balance += notes[note] * note;
                 }
             }
@@ -121,7 +118,7 @@ function createBankomat(bankNotesRepository, bank) {
             let notes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
             let sum = money;
             let repository = this.notesRepository;
-            while (sum !== 0) {
+            while (sum !== 0 && notes.length) {
                 let note = notes[0];
                 let freeNotes = repository[note];
                 let notesNeeded = Math.floor(sum / note);
@@ -132,7 +129,10 @@ function createBankomat(bankNotesRepository, bank) {
                 }
                 notes = notes.slice(1);
             }
-            return result;
+            if (sum === 0) {
+                this.currentClient.balance -= money;
+                return result;
+            } else throw new Error();
         }
     }
 }
@@ -149,15 +149,20 @@ const greenBankNotesRepository = {
 };
 
 const greenBank = createBank('GREENBANK');
-console.log(greenBank)
+//console.log(greenBank)
 const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
-console.log(greenBankBankomat)
+//console.log(greenBankBankomat)
 const clientVasiliy = createClient('Василий', 2500);
-console.log(clientVasiliy)
+//console.log(clientVasiliy)
 console.log(greenBank.addClient(clientVasiliy)); // true
-console.log(greenBank.addClient(clientVasiliy)); // Error
+// console.log(greenBank.addClient(clientVasiliy)); // Error
 console.log(greenBankBankomat.setClient(clientVasiliy)); // true
-console.log(greenBankBankomat.giveMoney(2100));
+console.log(clientVasiliy)
+console.log(greenBankBankomat.giveMoney(2000));
+console.log(clientVasiliy)
+console.log(greenBankBankomat.addMoney({ 10: 3 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 }));
+console.log(clientVasiliy);
+//console.log(greenBankBankomat.notesRepository);
 //console.log(greenBankBankomat.removeClient());
 
 module.exports = {createClient, createBank, createBankomat};
