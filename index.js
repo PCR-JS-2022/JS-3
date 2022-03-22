@@ -185,6 +185,7 @@ function createBankomat(bankNotesRepository, bank) {
             if(total === undefined) {
                 throw new Error('Выдать деняк не есть возможно');
             } else {
+                this.currentClient.balance = this.currentClient.balance - cash;
                 return total
             };
         }
