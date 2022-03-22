@@ -106,7 +106,7 @@ function createBankomat(bankNotesRepository, bank) {
             },
 
             addMoney(...banknotes) {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient)) {
+                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
                     banknotes.forEach(banknote => {
                         for (let i in banknote) {
                             this.notesRepository[i] += banknote[i];
@@ -117,7 +117,7 @@ function createBankomat(bankNotesRepository, bank) {
             },
 
             giveMoney(sum) {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient)) {
+                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
                     if (sum > this.currentClient.balance)
                         throw new Error("Привышен лимит выдачи")
                     if (sum % 10 !== 0)
