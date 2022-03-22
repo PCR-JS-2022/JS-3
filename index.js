@@ -4,7 +4,7 @@
  * @property {string} name
  * @property {number} balance
  */
-
+ 
 /**
  * @typedef Bank
  * @type {object}
@@ -27,15 +27,15 @@
  */
 
 function checkClient(client) {
-    return !client instanceof Object ||
-    !client.hasOwnProperty('name') || !client.name instanceof String || !client.name ||
-    !client.hasOwnProperty('balance') || !client.balance instanceof Number;
+    return typeof client != 'string' ||
+    !client.hasOwnProperty('name') || typeof client.name != 'string' || !client.name ||
+    !client.hasOwnProperty('balance') || typeof client.balance != 'number';
 }
 
 function checkBank(bank) {
-    return bank instanceof Object &&
-    bank.hasOwnProperty('bankName') && bank.bankName instanceof String && bank.bankName &&
-    bank.hasOwnProperty('clients') && bank.clients instanceof Array &&
+    return typeof bank === 'object' &&
+    bank.hasOwnProperty('bankName') && typeof bank.bankName === 'string' && bank.bankName &&
+    bank.hasOwnProperty('clients') && typeof bank.clients === 'array' &&
     bank.hasOwnProperty('addClient') &&
     bank.hasOwnProperty('removeClient');
 }
@@ -48,7 +48,7 @@ function checkBank(bank) {
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-    if (!name instanceof String || !name || !balance instanceof Number) {
+    if (typeof name != 'string' || !name || typeof balance != 'number') {
         throw new Error('Ошибка "createClient"');
     }
     return {name, balance};
@@ -62,7 +62,7 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
-    if (!bankName instanceof String || !bankName || !clients instanceof Array)
+    if (typeof bankName != 'string' || !bankName || typeof clients != 'array')
     return {
         bankName,
         clients,
@@ -94,7 +94,7 @@ function createBank(bankName, clients = []) {
  */
 function createBankomat(bankNotesRepository, bank) {
     if(!checkBank(bank) ||
-    !bankNotesRepository instanceof Object || !bankNotesRepository){
+    typeof bankNotesRepository != 'object' || !bankNotesRepository){
         throw new Error('Ошибка createBankomat');
     }
     return {
