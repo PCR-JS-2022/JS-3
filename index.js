@@ -99,7 +99,7 @@ function createBankomat(bankNotesRepository, bank) {
             },
 
             removeClient() {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient)) {
+                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
                     this.currentClient = undefined;
                     return true;
                 } else throw new Error("Клиент не удален")
