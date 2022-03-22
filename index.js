@@ -102,9 +102,11 @@ function createBank(bankName, clients = []) {
             return true
         },
         removeClient(client) {
-            if (!(clientValid(client)) || this.clients.includes(client)) {
+            if (!(clientValid(client.name, client.balance)) || !this.clients.includes(client)) {
                 throw new Error('Удалить клиента не есть возможно');
             }
+            this.clients = this.clients.filter((badClient) => badClient !== client);
+            return true
         }
     }
 }
