@@ -34,13 +34,13 @@
  * @returns {Client} Объект клиента
  */
 
-function createClient(name, balance) {
+function createClient(name, balance = 0) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
         throw new Error();
     }
     return {
         name: name,
-        balance: balance || 0
+        balance: balance
     }
 }
 
@@ -54,13 +54,13 @@ function isValidClient(client) {
  * @param {Array<Client>} clients Список клиентов банка
  * @returns {Bank} Объект банка
  */
-function createBank(bankName, clients) {
+function createBank(bankName, clients = []) {
     if (typeof bankName !== 'string' || !clients instanceof Array) {
         throw new Error();
     }
     return {
         bankName: bankName,
-        clients: clients || [],
+        clients: clients,
         addClient(person) {
             if (!isValidClient(person) || this.clients.includes(person)) throw new Error();
             this.clients.push(person);
