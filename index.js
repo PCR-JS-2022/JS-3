@@ -48,7 +48,7 @@ function checkBank(bank) {
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-    if (!name instanceof String || !name ||  isNaN(balance)) {
+    if (!name instanceof String || !name || !balance instanceof Number) {
         throw new Error('Ошибка "createClient"');
     }
     return {name, balance};
