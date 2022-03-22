@@ -92,7 +92,7 @@ function createBankomat(bankNotesRepository, bank) {
             currentClient: undefined,
 
             setClient(client) {
-                if (this.currentClient === undefined && this.bank.clients.find(elem => elem.name === client) && this.isValidClient(client)) {
+                if (this.currentClient === undefined && this.bank.clients.find(elem => elem.name === client.name) && this.isValidClient(client)) {
                     this.currentClient = client;
                     return true
                 } else throw new Error("Клиент не установлен")
