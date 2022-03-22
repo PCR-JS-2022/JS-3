@@ -64,10 +64,11 @@ function validateClient(client) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
-  if (typeof bankName !== "string" || !Array.isArray(clients))
+  if (typeof bankName !== "string" || !Array.isArray(clients)) {
     throw new Error(
       `Я сломался. [name]=${bankName}, [balance]=${JSON.stringify(clients)}`
     );
+  }
 
   return {
     bankName,
@@ -76,32 +77,31 @@ function createBank(bankName, clients = []) {
       if (!validateClient(newClient))
         throw new Error("Переданы невалидные аргументы");
 
-      if (this.clients.some((client) => client.name === newClient.name))
+      const isClientOfCurrentBank = this.clients.some(
+        (client) => client.name === newClient.name
+      );
+      if (isClientOfCurrentBank) {
         throw new Error(
-          `Клиент с таким именем уже существует. [client]=${JSON.stringify(
-            newClient
-          )}`
+          `Клиент с таким именем уже существует. 
+          [client]=${JSON.stringify(newClient)}`
         );
-      else {
+      } else {
         this.clients.push(newClient);
         return true;
       }
     },
     removeClient: function (clientToRemove) {
-      if (!validateClient(clientToRemove))
-        throw new Error("Переданы невалидные аргументы");
-
       if (this.clients.some((client) => client.name === clientToRemove.name)) {
         this.clients = this.clients.filter(
           (client) => client.name !== clientToRemove.name
         );
         return true;
-      } else
+      } else {
         throw new Error(
-          `Пытаемся удалить несуществующего клиента. [client]=${JSON.stringify(
-            clientToRemove
-          )}`
+          `Пытаемся удалить несуществующего клиента. 
+          [client]=${JSON.stringify(clientToRemove)}`
         );
+      }
     },
   };
 }
@@ -134,11 +134,12 @@ function createBankomat(bankNotesRepository = {}, bank) {
     notesRepository: bankNotesRepository,
     currentClient: undefined,
     setClient: function (clientToSet) {
-      if (
+      const isAbleToSet =
         this.bank.clients.some((client) => client.name === clientToSet.name) &&
         this.currentClient === undefined &&
-        validateClient(clientToSet)
-      ) {
+        validateClient(clientToSet);
+
+      if (isAbleToSet) {
         this.currentClient = clientToSet;
         return true;
       } else
@@ -171,11 +172,15 @@ function createBankomat(bankNotesRepository = {}, bank) {
       return this.addMoney.bind(this);
     },
     giveMoney: function (sumToGive) {
-      if (this.currentClient === undefined)
+      if (this.currentClient === undefined) {
         throw new Error("С капустой никто не работает");
-      if (sumToGive > this.currentClient.balance)
+      }
+      if (sumToGive > this.currentClient.balance) {
         throw new Error("Сумма выдачи больше баланса клиента");
-      if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
+      }
+      if (sumToGive % 10 !== 0) {
+        throw new Error("Сумма выдачи не кратна 10");
+      }
 
       const moneyToGive = {};
       nominals.forEach((nominal) => {
@@ -191,7 +196,9 @@ function createBankomat(bankNotesRepository = {}, bank) {
         moneyToGive[nominal] = count;
       });
 
-      if (sumToGive !== 0) throw new Error("Не хватило капусты");
+      if (sumToGive !== 0) {
+        throw new Error("Не хватило капусты");
+      }
 
       this.currentClient.balance -= sumToGive;
       return moneyToGive;
