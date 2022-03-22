@@ -39,7 +39,7 @@ const notesRepository = {
 let provero4ka = createBankomat(notesRepository, greenBank);
 let huet = provero4ka.setClient(clientVasiliy);
 huet = provero4ka.giveMoney(2000);
-huet = provero4ka.addMoney([{ 1000: 1, 500: 2 }, {}, {}]);
+huet = provero4ka.addMoney({ 10: 2 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 });
 huet = provero4ka.removeClient();
 huet = provero4ka.setClient(bobo[2]);
 huet = provero4ka.giveMoney(2000);
@@ -168,17 +168,17 @@ function createBankomat(bankNotesRepository, bank) {
             this.currentClient = undefined;
             return true;
         },
-        addMoney: function (...moooney) {
+        addMoney(...moooney) {
             const NoCustomer = new Error('Клиента нет')
-            if (currentClient !== undefined)
+            if (currentClient !== undefined || !moooney.length)
                 throw NoCustomer;
 
-            for (let moneyObj of moooney) {
-                for (let i in moneyObj) {
+            for (const moneyObj of moooney) {
+                for (const i in moneyObj) {
                     this.notesRepository[i] += moneyObj[i];
                     this.currentClient.balance += moneyObj[i] * i;
-                };
-            };
+                }
+            }
             return this.addMoney.bind(this);
         },
         giveMoney: function (moooney) {
@@ -187,7 +187,7 @@ function createBankomat(bankNotesRepository, bank) {
                 throw NoCustomer;
             let allMoneyInAtf = 0;
             for (let i = 1; i < 9; i++) {
-                allMoneyInAtf += allBanknotes[i] * notesRepository[allBanknotes[i]];
+                allMoneyInAtf += allBanknotes[i] * this.notesRepository[allBanknotes[i]];
             }
             const WeNeedMoreMoney = new Error('В банкомате недостаточно средств')
             if (allMoneyInAtf < moooney)
@@ -198,52 +198,35 @@ function createBankomat(bankNotesRepository, bank) {
             const noRequiredBanknotes = new Error('В банкомате нет нужных банкнот');
 
             let banknotes = {
-                5000: 0,
+                /*5000: 0,
                 2000: 0,
                 1000: 0,
                 500: 0,
                 200: 0,
                 100: 0,
                 50: 0,
-                10: 0,
+                10: 0,*/
             };
+            let isSumMoreThenNominals;
+            let isSumMoreThenAllBanknotes;
+            for (let i = 1; i < 9; i++) {
+                isSumMoreThenNominals = moooney >= allBanknotes[i];
+                isSumMoreThenAllBanknotes = moooney <= allBanknotes[i] * this.notesRepository[allBanknotes[i]];
+                if (isSumMoreThenNominals && moooney !== 0)
+                    if (isSumMoreThenAllBanknotes)
+                        banknotes[allBanknotes[i]] = Math.floor(moooney / allBanknotes[i]);
+                    else banknotes[allBanknotes[i]] = this.notesRepository[allBanknotes[i]];
+                if (banknotes[allBanknotes[i]])
+                    moooney -= banknotes[allBanknotes[i]] * allBanknotes[i];
 
-            const arrNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
-            arrNotes.forEach(([nominal, banknoteCount], i) => {
-
-                let moooneyCount = Math.floor(moooney / nominal);
-
-                if (banknoteCount !== 0 && moooney >= nominal && moooney) {
-                    if (banknoteCount * nominal <= moooney) 
-                        moooneyCount = banknoteCount;
-                    banknotes[nominal] = moooneyCount;
-                    arrNotes[i] = [nominal, banknoteCount - moooneyCount];
-                    this.notesRepository[nominal] -= moooneyCount;
-                    moooney -= nominal * moooneyCount;
-                }
-            });
-
-            /*
-             let isSumMoreThenNominals;
-             let isSumMoreThenAllBanknotes;
-             for (let i = 1; i < 9; i++) {
-                 isSumMoreThenNominals = moooney >= allBanknotes[i];
-                 isSumMoreThenAllBanknotes = moooney <= allBanknotes[i] * notesRepository[allBanknotes[i]];
- 
-                 if (isSumMoreThenNominals)
-                     if (isSumMoreThenAllBanknotes)
-                         banknotes[allBanknotes[i]] = Math.floor(moooney / allBanknotes[i]);
-                     else banknotes[allBanknotes[i]] = notesRepository[allBanknotes[i]];
- 
-                 moooney -= banknotes[allBanknotes[i]] * allBanknotes[i];
-             }
-             */
+            }
             if (moooney != 0)
                 throw noRequiredBanknotes;
-            /*
             for (let i = 1; i < 9; i++) {
+                if (banknotes[allBanknotes[i]]){
                 this.notesRepository[allBanknotes[i]] -= banknotes[allBanknotes[i]];
-            }*/
+                this.currentClient.balance -=banknotes[allBanknotes[i]] * allBanknotes[i];}
+            }
             return banknotes;
         }
     };
