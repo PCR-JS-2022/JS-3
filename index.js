@@ -92,7 +92,7 @@ function createBankomat(bankNotesRepository, bank) {
             currentClient: undefined,
 
             setClient(client) {
-                if (this.currentClient === undefined && this.bank.clients.find(elem => elem.name === client)) {
+                if (this.currentClient === undefined && this.bank.clients.find(elem => elem.name === client) && this.isValidClient(client)) {
                     this.currentClient = client;
                     return true
                 } else throw new Error("Клиент не установлен")
@@ -151,6 +151,11 @@ function createBankomat(bankNotesRepository, bank) {
                     } else throw new Error("Не хватает купюр");
                 } else throw new Error("Клиент не найден");
             },
+
+            isValidClient(client) {
+                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
+                    && typeof client.name === "string" && typeof client.balance === "number")
+            }
         }
     } else throw new Error("Невалиднын данные банка");
 }
