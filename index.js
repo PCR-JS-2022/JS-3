@@ -182,14 +182,19 @@ function createBankomat(bankNotesRepository, bank) {
                 };
             };
             const total = collect(cash, avaliableNominals);
-            if(total === undefined) {
+            if (total === undefined) {
                 throw new Error('Выдать деняк не есть возможно');
             } else {
-                this.currentClient.balance = this.currentClient.balance - cash;
+                Object.entries(total)
+                    .forEach(([bankNote, qty]) => {
+                        this.notesRepository[bankNote] -= qty;
+                        this.currentClient.balance -= bankNote * qty;
+                    })
                 return total
             };
         }
     };
 };
+
 
 module.exports = { createClient, createBank, createBankomat };
