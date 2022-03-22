@@ -168,7 +168,7 @@ function createBankomat(bankNotesRepository = {}, bank) {
       });
 
       this.currentClient.balance += sum;
-      return this.addMoney;
+      return this.addMoney.bind(this);
     },
     giveMoney: function (sumToGive) {
       if (this.currentClient === undefined)
@@ -178,17 +178,16 @@ function createBankomat(bankNotesRepository = {}, bank) {
       if (sumToGive % 10 !== 0) throw new Error("Сумма выдачи не кратна 10");
 
       const moneyToGive = {};
-      const bankomat = this;
       nominals.forEach((nominal) => {
         const nominalNumber = Number.parseInt(nominal);
 
         if (sumToGive === 0 || nominalNumber > sumToGive) return;
         const count = Math.min(
           Math.trunc(sumToGive / nominalNumber),
-          bankomat.notesRepository[nominal]
+          this.notesRepository[nominal]
         );
         sumToGive -= nominalNumber * count;
-        bankomat.notesRepository[nominal] -= count;
+        this.notesRepository[nominal] -= count;
         moneyToGive[nominal] = count;
       });
 
