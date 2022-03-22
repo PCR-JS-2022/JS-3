@@ -126,10 +126,11 @@ function createBankomat(bankNotesRepository, bank) {
                 sum -= note * numberOfNotes;
                 if (numberOfNotes !== 0) {
                     result[note] = numberOfNotes;
+                    this.notesRepository[note] -= numberOfNotes;
                 }
                 notes = notes.slice(1);
             }
-            if (sum === 0) {
+            if (sum === 0 ) {
                 this.currentClient.balance -= money;
                 return result;
             } else throw new Error();
@@ -157,11 +158,13 @@ const clientVasiliy = createClient('Василий', 2500);
 console.log(greenBank.addClient(clientVasiliy)); // true
 // console.log(greenBank.addClient(clientVasiliy)); // Error
 console.log(greenBankBankomat.setClient(clientVasiliy)); // true
+//console.log(clientVasiliy)
+console.log(greenBankBankomat.notesRepository);
+console.log(greenBankBankomat.giveMoney(300));
+console.log(greenBankBankomat.notesRepository);
 console.log(clientVasiliy)
-console.log(greenBankBankomat.giveMoney(2000));
-console.log(clientVasiliy)
-console.log(greenBankBankomat.addMoney({ 10: 3 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 }));
-console.log(clientVasiliy);
+//console.log(greenBankBankomat.addMoney({ 10: 3 })({ 50: 1, 10: 1 })({ 10: 3 }, { 100: 1 }));
+//console.log(clientVasiliy);
 //console.log(greenBankBankomat.notesRepository);
 //console.log(greenBankBankomat.removeClient());
 
