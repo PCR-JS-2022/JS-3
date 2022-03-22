@@ -178,13 +178,17 @@ function createBankomat(bankNotesRepository, bank) {
                     const result = collect(money - i * curNominal, avaliableNominals.slice(1));
                     if (result) {
                         return i ? { [curNominal]: i, ...result } : result;
-                    }
-                }
-            }
-
-            return collect(cash, avaliableNominals)
+                    };
+                };
+            };
+            const total = collect(cash, avaliableNominals);
+            if(total === undefined) {
+                throw new Error('Выдать деняк не есть возможно');
+            } else {
+                return total
+            };
         }
-    }
-}
+    };
+};
 
 module.exports = { createClient, createBank, createBankomat };
