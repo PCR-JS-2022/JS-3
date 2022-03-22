@@ -72,11 +72,14 @@ function createBank(bankName, clients = []) {
     },
 
     removeClient: function(client) {
-      const clientIndex = this.clients.indexOf(client);
-      if (!isValideClient(client) || clientIndex === -1) {
+      if (!isValideClient(client)) {
         throw new Error();
       }
-      this.clients = this.clients.filter((_, index) => index !== clientIndex);
+      const newClients = this.clients.filter(item => item !== client);
+      if (newClients.length === this.clients.length) {
+        throw new Error();
+      }
+      this.clients = newClients;
       return true;
     },
   };
