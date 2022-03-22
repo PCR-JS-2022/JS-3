@@ -35,7 +35,7 @@
  */
 function createClient(name, balance = 0) {
     if(typeof name !== "string" || typeof balance !== "number"){
-        throw new Error();
+        throw new Error('Некорректные данные при создании клиента');
     }
         
     return {
@@ -45,7 +45,7 @@ function createClient(name, balance = 0) {
 }
 
 function isClient(client){
-    return client.hasOwnProperty('name') && client.hasOwnProperty('balance');
+    return client.name && client.balance;
 }
 
 /**
@@ -57,22 +57,28 @@ function isClient(client){
  */
 function createBank(bankName, clients = []) {
     if(typeof bankName !== "string" || !Array.isArray(clients)){
-        throw new Error();
+        throw new Error('Некорректные данные при создании банка');
     };
 
     return {
         bankName, clients,
         addClient: function(client) {
-            if(!isClient(client) || this.clients.some(e => e.name === client.name)){
-                throw new Error();
+            if(!isClient(client)){
+                throw new Error('Некорректные данные');
+            }
+            if(this.clients.some(e => e.name === client.name)){
+                throw new Error('Клиент уже существует');
             }
 
             this.clients.push(client);
             return true;
         },
         removeClient: function(client) {
-            if(this.clients.findIndex(e => e.name === client.name) === -1 || !isClient(client)){
-                throw new Error();
+            if(!isClient(client)){
+                throw new Error('Некорректные данные');
+            }
+            if(this.clients.findIndex(e => e.name === client.name) === -1){
+                throw new Error('Такого клиента не существует');
             }
 
             this.clients = this.clients.filter(e => e.name !== client.name);
@@ -82,10 +88,7 @@ function createBank(bankName, clients = []) {
 }
 
 function isBank(bank){
-    return bank.hasOwnProperty('bankName')
-        && bank.hasOwnProperty('clients')
-        && bank.hasOwnProperty('addClient')
-        && bank.hasOwnProperty('removeClient');
+    return bank.bankName && bank.clients && bank.addClient && bank.removeClient;
 }
 
 /**
@@ -97,7 +100,7 @@ function isBank(bank){
  */
 function createBankomat(bankNotesRepository, bank) {
     if(!isBank(bank) || typeof bankNotesRepository !== 'object'){
-        throw new Error();
+        throw new Error('Некорректные данные при создании банкомата');
     }
 
     return {
@@ -105,9 +108,14 @@ function createBankomat(bankNotesRepository, bank) {
         notesRepository: bankNotesRepository,
         currentClient: undefined,
         setClient: function(client) {
-            if(!isClient(client) || !this.bank.clients.some(e => e.name === client.name)
-                || this.currentClient !== undefined) {
-                throw new Error();
+            if(!isClient(client)){
+                throw new Error('Некорректные данные');
+            }
+            if(!this.bank.clients.some(e => e.name === client.name)) {
+                throw new Error('Пользователь не является клиентом банка');
+            }
+            if(this.currentClient !== undefined){
+                throw new Error('Банкомат занят другим клиентом');
             }
 
             this.currentClient = client;
@@ -119,43 +127,53 @@ function createBankomat(bankNotesRepository, bank) {
         },
         addMoney: function(...cash) {
             if(this.currentClient === undefined){
-                throw new Error();
+                throw new Error('Клиент не установлен');
             }
             
             cash.forEach(e => {
-                Object.entries(e).forEach(x => {
-                   this.notesRepository[x[0]] = x[1];
-                   this.currentClient.balance += x[0] * x[1];
+                Object.entries(e).forEach(([key, value]) => {
+                   this.notesRepository[key] = value;
+                   this.currentClient.balance += key * value;
                 })
             })
 
             return this.addMoney.bind(this);
         },
         giveMoney: function(sum) {
-            if(typeof sum !== 'number' || sum % 10 !== 0 
-                || this.currentClient === undefined 
-                || sum > this.currentClient.balance){
-                throw new Error();
+            if(typeof sum !== 'number'){
+                throw new Error('Некорректные данные');
+            }
+            if(sum % 10 !== 0){
+                throw new Error('Сумма не кратна 10');
+            }
+            if(this.currentClient === undefined){
+                throw new Error('Клиент не установлен');
+            }
+            if(sum > this.currentClient.balance){
+                throw new Error('Недостаточно средств');
             }
 
             let tempSum = sum;
             const tempRep = this.notesRepository;
-            const result = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]).map(e => {
+            const result = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]).reduce((a, [key, value]) => {
                 let count = 0;
 
-                if(e[1] !== 0){
-                    const flCount = Math.floor(tempSum / e[0]);
-                    count = flCount > e[1] ? e[1] : flCount;
+                if(value !== 0){
+                    const flCount = Math.floor(tempSum / key);
+                    count = flCount > value ? value : flCount;
                 }
 
-                tempSum -= e[0] * count;
-                this.notesRepository[e[0]] -= count;
-                if(count !== 0) return { [e[0]]: count };
-            }).filter(e => e !== undefined);
+                tempSum -= key * count;
+                this.notesRepository[key] -= count;
+                if(count !== 0){
+                    a[key] = count;
+                } 
+                return a;
+            }, {});
 
             if(tempSum !== 0) {
                 this.notesRepository = tempRep;
-                throw new Error();
+                throw new Error('У банкомата нет необходимых купюр');
             }
 
             return result;
