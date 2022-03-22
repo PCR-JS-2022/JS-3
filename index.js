@@ -27,7 +27,7 @@
  */
 
 function checkClient(client) {
-    return typeof client != 'string' ||
+    return typeof client != 'object' ||
     !client.hasOwnProperty('name') || typeof client.name != 'string' || !client.name ||
     !client.hasOwnProperty('balance') || typeof client.balance != 'number';
 }
@@ -62,7 +62,9 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
-    if (typeof bankName != 'string' || !bankName || !Array.isArray(client))
+    if (typeof bankName != 'string' || !bankName || !Array.isArray(clients)){
+        throw new Error('Ошибка createBank');
+    }
     return {
         bankName,
         clients,
@@ -104,6 +106,7 @@ function createBankomat(bankNotesRepository, bank) {
         setClient: function setClient(client) {
             if (checkClient(client) || this.currentClient || !this.bank.clients.includes(client))
                 throw new Error('Ошибка "setClient"');
+            this.currentClient = client;
             return true;
         },
         removeClient: function removeClient() {
@@ -146,7 +149,7 @@ function createBankomat(bankNotesRepository, bank) {
                 this.notesRepository[value] -= banknotesNeeded;
                 notesToGive[value] = banknotesNeeded;
                 return notesToGive;
-            });
+            }, {});
             if(moneyToGive > 0){
                 throw new Error('Недостаточно купюр в банкомате');
             }
