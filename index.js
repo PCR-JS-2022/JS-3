@@ -34,7 +34,7 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-    if(!name || typeof name !== "string" || !balance || typeof balance !=="number"){
+    if(!name || typeof name !== "string" || typeof balance !=="number"){
         throw new Error('Неверные данные');
     }
     return{
@@ -58,8 +58,27 @@ function createBank(bankName, clients = []) {
     return{
         bankName,
         clients: clients,
-        addClient: function(){},
-        removeClient: function(){},
+        addClient(client){
+            if(this.clients.includes(client)) {
+                throw new Error("Этот клиент есть");
+            }
+            if(!(typeof client.name === "string" && typeof client === "object" && typeof client.balance === "number")){
+                throw new Error("Неверные данные");
+            }
+            this.clients.push(client);
+            return true;
+        },
+        removeClient(client){
+            if(!(typeof client.name === "string" && typeof client === "object" && typeof client.balance === "number")) {
+                throw new Error("Неверные данные");
+            }
+            if(!this.clients.includes(client)) {
+                throw new Error("Этого клиента нет");
+            }
+            
+            this.clients = this.clients.filter(e => e !== client);
+            return true;
+        }
     }
 }
 
@@ -73,3 +92,4 @@ function createBank(bankName, clients = []) {
 function createBankomat(bankNotesRepository, bank) {}
 
 module.exports = { createClient, createBank, createBankomat };
+
