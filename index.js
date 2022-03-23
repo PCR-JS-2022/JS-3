@@ -111,7 +111,7 @@ function createBankomat(notesRepository, bank) {
             if (this.currentClient != undefined) {
                 throw new Error("С банкоматом уже работает клиент")
             }
-            checkClientInBank(this, client)
+            checkClientInBank(bank, client)
             this.currentClient = client
             return true
         },
