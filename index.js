@@ -125,15 +125,13 @@ function createBankomat(notesRepository, bank) {
             throw new Error('No client');
         }
 
-        let sum = 0;
-
         banknotes.forEach((banknote) => {
             for (let nominal in banknote) {
                 this.notesRepository[nominal] += banknote[nominal];
-                sum = Number(nominal) * Number(banknote[nominal]);
+                this.currentClient.balance += Number(nominal) * banknote[nominal];
             }
-            this.currentClient.balance += sum;
         });
+        
         return this.addMoney.bind(this);
     }
 
