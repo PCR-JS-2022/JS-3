@@ -75,7 +75,7 @@ function createBankomat(notesRepository, bank) {
 		notesRepository,
 		currentClient: undefined,
 		setClient: function (client) {
-			if (this.currentClient !== undefined) 
+			if (this.currentClient) 
 				throw new Error('В настоящий момент банкоматом пользуется другой клиент');
 			
       if (!this.bank.clients.includes(client)) 
@@ -94,7 +94,6 @@ function createBankomat(notesRepository, bank) {
  			if (!this.currentClient) 
  				throw new Error('Клиент не найден');
  			
-
  			for (const m of money) {
  				for (const nominal in m) {
  					this.notesRepository[nominal] += m[nominal];
@@ -105,35 +104,34 @@ function createBankomat(notesRepository, bank) {
  		},
 
 		giveMoney: function (money) {
-
-
       if (!this.currentClient) 
         throw new Error('Клиент не найден')
 
 			if (money % 10 !== 0) 
 				throw new Error('Недостаточно средств для снятия');
 			
-			if (money > this.currentClient.balance) {
-				throw new Error("Not enough money in the bank account");
-			}
+			if (money > this.currentClient.balance) 
+				throw new Error('Недостаточно средств для снятия');
 
+      let boundedM = money;
 			const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+
 			const result = banknotes.reduce((result, banknote) => {
-				let boundedBanknotes = Math.floor(money / banknote);
-				const stockBanknotes = this.notesRepository[banknote];
-				if (boundedBanknotes === 0) {
+				let boundedBanknotes = Math.floor(boundedM / banknote);
+				const reserves = this.notesRepository[banknote];
+				if (boundedBanknotes === 0) 
 					return result;
-				}
-				if (stockBanknotes < boundedBanknotes) {
-					boundedBanknotes = stockBanknotes;
-				}
-				money -= banknote * boundedBanknotes;
+				
+				if (reserves < boundedBanknotes) 
+					boundedBanknotes = reserves;
+				
+        boundedM -= banknote * boundedBanknotes;
 				this.notesRepository[banknote] -= boundedBanknotes;
 				result[banknote] = boundedBanknotes;
 				return result;
 			},)
 
-      if (money !== 0) 
+      if (boundedM !== 0) 
 				throw Error('Не удалось выдать наличные. Недостаточно купюр.');
 
 			this.currentClient.balance -= money;
