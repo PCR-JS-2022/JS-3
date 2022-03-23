@@ -111,7 +111,7 @@ function createBankomat(notesRepository, bank) {
             if (this.currentClient != undefined) {
                 throw new Error("С банкоматом уже работает клиент")
             }
-            checkClientInBank(bank, client)
+            checkClientInBank(this.bank, client)
             this.currentClient = client
             return true
         },
@@ -148,7 +148,9 @@ function createBankomat(notesRepository, bank) {
                 throw new Error("На счету недостаточно средств")
             }
 
-            const banknotes = this.notesRepository.sort((first, second) => {
+            let banknotes = []
+            for (let nominal in this.notesRepository) banknotes.push(nominal)
+            banknotes = banknotes.sort((first, second) => {
                 if (first > second) {
                     return -1
                 }
@@ -188,24 +190,3 @@ module.exports = {
     createBank,
     createBankomat 
 };
-
-
-
-// const clients = Array.from({ length: 10 }, (_, index) =>
-//     createClient(`name ${index}`, 100 + index)
-// );
-// const bank = createBank("Bibici", clients);
-// // const notesRepository = {
-// //     5000: 2,
-// //     2000: 5,
-// //     1000: 77,
-// //     500: 3,
-// //     200: 2,
-// //     100: 2,
-// //     50: 1,
-// //     10: 6,
-// // };
-// // const bankomat = createBankomat(notesRepository, bank);
-// const client = createClient("name", 200)
-// bank.addClient(client)
-// console.log(bank)
