@@ -131,7 +131,7 @@ function createBankomat(notesRepository, bank) {
                 this.currentClient.balance += Number(nominal) * banknote[nominal];
             }
         });
-        
+
         return this.addMoney.bind(this);
     }
 
@@ -151,7 +151,7 @@ function createBankomat(notesRepository, bank) {
         const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
 
         let sumInBankomat = 0;
-        for (let banknote in banknotes)
+        for (let banknote of banknotes)
             sumInBankomat += banknote * this.notesRepository[banknote];
 
         if (sumInBankomat < money) {
@@ -161,7 +161,7 @@ function createBankomat(notesRepository, bank) {
 
         let moneyToGive = money;
         const newRepository = {};
-        for (let banknote in banknotes) {
+        for (let banknote of banknotes) {
             let amount = Math.floor(moneyToGive / banknote);
             if (amount === 0) {
                 continue;
@@ -189,55 +189,55 @@ function createBankomat(notesRepository, bank) {
 
 module.exports = { createClient, createBank, createBankomat };
 
-// const greenBankNotesRepository = {
-//     5000: 2,
-//     2000: 3,
-//     1000: 13,
-//     500: 20,
-//     200: 10,
-//     100: 5,
-//     50: 2,
-//     10: 5,
-//   };
+const greenBankNotesRepository = {
+    5000: 2,
+    2000: 3,
+    1000: 13,
+    500: 20,
+    200: 10,
+    100: 5,
+    50: 2,
+    10: 5,
+  };
   
-//   const greenBank = createBank('GREENBANK');
-//   console.log(JSON.stringify(greenBank));
-//   /**
-//    * {
-//    *   bankName: 'GREENBANK',
-//    *   clients: [],
-//    *   ...
-//    * }
-//    */
-//   const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
-//   console.log(JSON.stringify(greenBankBankomat));
-//   /**
-//    * {
-//    *   notesRepository: greenBankNotesRepository,
-//    *   bank: greenBank,
-//    *   ...
-//    * }
-//    */
+  const greenBank = createBank('GREENBANK');
+  console.log(JSON.stringify(greenBank));
+  /**
+   * {
+   *   bankName: 'GREENBANK',
+   *   clients: [],
+   *   ...
+   * }
+   */
+  const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
+  console.log(JSON.stringify(greenBankBankomat));
+  /**
+   * {
+   *   notesRepository: greenBankNotesRepository,
+   *   bank: greenBank,
+   *   ...
+   * }
+   */
   
-//   const clientVasiliy = createClient('Василий', 2500);
-//   console.log(JSON.stringify(clientVasiliy));
-//   /**
-//    * {
-//    *   name: 'Василий',
-//    *   balance: 2500,
-//    * }
-//    */
+  const clientVasiliy = createClient('Василий', 2500);
+  console.log(JSON.stringify(clientVasiliy));
+  /**
+   * {
+   *   name: 'Василий',
+   *   balance: 2500,
+   * }
+   */
   
-//   console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
-//  // console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
+  console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
+ // console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
   
-//   console.log(JSON.stringify(greenBankBankomat.setClient(clientVasiliy))); // true
+  console.log(JSON.stringify(greenBankBankomat.setClient(clientVasiliy))); // true
   
-//   console.log(JSON.stringify(greenBankBankomat.giveMoney(1000)));
-//   /**
-//    * {
-//    *   1000: 1,
-//    * }
-//    */
+  console.log(JSON.stringify(greenBankBankomat.giveMoney(1000)));
+  /**
+   * {
+   *   1000: 1,
+   * }
+   */
   
-//    console.log(JSON.stringify(greenBankBankomat.removeClient()));// true
+   console.log(JSON.stringify(greenBankBankomat.removeClient()));// true
