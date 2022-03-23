@@ -103,37 +103,35 @@ function createBankomat(notesRepository, bank) {
  			return this.addMoney.bind(this);
  		},
 
-		giveMoney: function (money) {
-      if (!this.currentClient) 
-        throw new Error('Клиент не найден')
-
+     giveMoney: function (money) {
 			if (money % 10 !== 0) 
-				throw new Error('Недостаточно средств для снятия');
+				throw new Error('Запрошенная сумма некорректна');
+			
+			if (this.currentClient === undefined) 
+				throw new Error('Клиент не найден');
 			
 			if (money > this.currentClient.balance) 
 				throw new Error('Недостаточно средств для снятия');
-
-      let boundedM = money;
+			
+			let temp = money;
 			const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
-
 			const result = banknotes.reduce((result, banknote) => {
-				let boundedBanknotes = Math.floor(boundedM / banknote);
-				const reserves = this.notesRepository[banknote];
-				if (boundedBanknotes === 0) 
+				let bbanknotes = Math.floor(temp / banknote);
+				const stockBanknotes = this.notesRepository[banknote];
+				if (requiredBanknotes === 0) {
 					return result;
-				
-				if (reserves < boundedBanknotes) 
-					boundedBanknotes = reserves;
-				
-        boundedM -= banknote * boundedBanknotes;
-				this.notesRepository[banknote] -= boundedBanknotes;
-				result[banknote] = boundedBanknotes;
+				}
+				if (stockBanknotes < bbanknotes) {
+					requiredBanknotes = stockBanknotes;
+				}
+				temp -= banknote * requiredBanknotes;
+				this.notesRepository[banknote] -= requiredBanknotes;
+				result[banknote] = requiredBanknotes;
 				return result;
-			},)
-
-      if (boundedM !== 0) 
+			}, {})
+			if (temp !== 0) {
 				throw Error('Не удалось выдать наличные. Недостаточно купюр.');
-
+			}
 			this.currentClient.balance -= money;
 			return result;
 		}
