@@ -125,10 +125,12 @@ function createBankomat(notesRepository, bank) {
             throw new Error('No client');
         }
 
+        let sum = 0;
+
         banknotes.forEach((banknote) => {
             for (let nominal in banknote) {
                 this.notesRepository[nominal] += banknote[nominal];
-                let sum = Number(nominal) * Number(banknote[nominal]);
+                sum = Number(nominal) * Number(banknote[nominal]);
             }
             this.currentClient.balance += sum;
         });
@@ -188,3 +190,56 @@ function createBankomat(notesRepository, bank) {
 }
 
 module.exports = { createClient, createBank, createBankomat };
+
+// const greenBankNotesRepository = {
+//     5000: 2,
+//     2000: 3,
+//     1000: 13,
+//     500: 20,
+//     200: 10,
+//     100: 5,
+//     50: 2,
+//     10: 5,
+//   };
+  
+//   const greenBank = createBank('GREENBANK');
+//   console.log(JSON.stringify(greenBank));
+//   /**
+//    * {
+//    *   bankName: 'GREENBANK',
+//    *   clients: [],
+//    *   ...
+//    * }
+//    */
+//   const greenBankBankomat = createBankomat(greenBankNotesRepository, greenBank);
+//   console.log(JSON.stringify(greenBankBankomat));
+//   /**
+//    * {
+//    *   notesRepository: greenBankNotesRepository,
+//    *   bank: greenBank,
+//    *   ...
+//    * }
+//    */
+  
+//   const clientVasiliy = createClient('Василий', 2500);
+//   console.log(JSON.stringify(clientVasiliy));
+//   /**
+//    * {
+//    *   name: 'Василий',
+//    *   balance: 2500,
+//    * }
+//    */
+  
+//   console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
+//  // console.log(JSON.stringify(greenBank.addClient(clientVasiliy)));
+  
+//   console.log(JSON.stringify(greenBankBankomat.setClient(clientVasiliy))); // true
+  
+//   console.log(JSON.stringify(greenBankBankomat.giveMoney(1000)));
+//   /**
+//    * {
+//    *   1000: 1,
+//    * }
+//    */
+  
+//    console.log(JSON.stringify(greenBankBankomat.removeClient()));// true
