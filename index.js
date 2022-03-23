@@ -121,7 +121,7 @@ function createBankomat(bankNotesRepository, bank) {
                     if (banknotesCount <= requiredBanknotes) {
                         requiredBanknotes = banknotesCount;
                     };
-                    banknotesCount -= requiredBanknotes;
+                    this.notesRepository[banknote] -= requiredBanknotes;
                     amountIssued -= requiredBanknotes * banknote;
                     banknotesList[banknote] = requiredBanknotes;
                 };
@@ -156,7 +156,7 @@ greenBank.addClient(clientVasiliy); // true
 
 greenBankBankomat.setClient(clientVasiliy); // true
 
-console.log(greenBankBankomat.giveMoney(2000));
+console.log(greenBankBankomat.giveMoney(1000));
 
 greenBankBankomat.removeClient() // true
 
