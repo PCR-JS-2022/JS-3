@@ -121,7 +121,7 @@ function createBankomat(notesRepository, bank) {
 				if (requiredBanknotes === 0) {
 					return result;
 				}
-				if (stockBanknotes < bbanknotes) {
+				if (stockBanknotes < requiredBanknotes) {
 					requiredBanknotes = stockBanknotes;
 				}
 				temp -= banknote * requiredBanknotes;
