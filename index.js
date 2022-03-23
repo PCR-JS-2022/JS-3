@@ -149,7 +149,9 @@ function createBankomat(notesRepository, bank) {
             }
 
             let banknotes = []
-            for (let nominal in this.notesRepository) banknotes.push(nominal)
+            for (let nominal in this.notesRepository) {
+                banknotes.push(nominal)
+            }
             banknotes = banknotes.sort((first, second) => {
                 if (first > second) {
                     return -1
@@ -161,26 +163,27 @@ function createBankomat(notesRepository, bank) {
             })
 
             const result = {}
-
+            
+            let sum_give = sum
             for (let nominal in banknotes) {
-                while (nominal <= sum && this.notesRepository[nominal] > 0) {
+                while (nominal <= sum_give && this.notesRepository[nominal] > 0) {
                     if (result[nominal] === undefined) {
                         result[nominal] = 0
                     }
                     result[nominal] += 1
-                    sum -= nominal
+                    sum_give -= nominal
                     this.notesRepository[nominal] -= 1
-                    if (sum == 0) {
+                    if (sum_give == 0) {
                         break
                     }
                 }
             }
 
-            if (sum != 0) {
+            if (sum_give != 0) {
                 throw new Error("Невозможно выдать заданную сумму")
             }
-            this.currentClient.balance -= money
-            return sum
+            this.currentClient.balance -= sum
+            return result
         }
     }
 }
