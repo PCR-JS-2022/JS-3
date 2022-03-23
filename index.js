@@ -81,6 +81,7 @@
         this.clients = this.clients.filter((index) =>  index !== client);
         return true;
       },
+      
     }
   }
 
@@ -91,6 +92,87 @@
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function createBankomat(bankNotesRepository, bank) {}
+
+ function isValidBank (bank) {
+  return (
+    typeof bank.bankName === 'string' && Array.isArray(bank.clients) && typeof bank.addClient === 'function' && typeof bank.removeClient === 'function'
+  );
+} 
+
+function createBankomat(bankNotesRepository, bank) {
+  if (!isValidBank(bank) || typeof bankNotesRepository !== 'object') {
+    throw new Error('Ошибка');
+  }
+
+  return {
+    bank,
+    notesRepository: bankNotesRepository,
+    currentClient: undefined,
+    setClient: function(client) {
+      if (
+        this.currentClient !== undefined ||
+        typeof client.name !== 'string' || typeof client.balance !== 'number' ||
+        !bank.clients.includes(client)
+        ) {
+          throw new Error('Ошибка');
+        }
+
+      this.currentClient = client;
+      return true;
+    },
+
+    removeClient: function() {
+      this.currentClient = undefined;
+      return true;
+    },
+
+    addMoney(...objects) {
+      if (!this.currentClient) {
+        throw new Error('Ошибка');
+      }
+
+      let sum = 0;
+      objects.forEach((item) => {
+        for (let key in item) {
+          this.notesRepository[key] += item[key];
+          sum += key * item[key];
+        }
+      })
+      this.currentClient.balance += sum;
+      console.log(sum);
+      return this.addMoney.bind(this);
+    },
+
+    giveMoney: function (allMoneyToClient) {
+      if (!this.currentClient || allMoneyToClient > this.currentClient.balance || allMoneyToClient % 10 !== 0) {
+        throw new Error('Ошибка');
+      }
+
+      let allSum = allMoneyToClient;
+      let result = {};
+      let bankNotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
+
+      while (allSum !== 0 && bankNotes.length) {
+        let note = bankNotes[0];
+        let emptyNotes = this.notesRepository[note];
+        let needNote = Math.floor(allSum / note);
+        let numberOfAllNotes = Math.min(emptyNotes, needNote);
+        allSum -= note * numberOfAllNotes;
+        if (numberOfAllNotes !== 0) {
+          result[note] = numberOfAllNotes;
+          this.notesRepository[note] -= numberOfAllNotes;
+        }
+        bankNotes = bankNotes.slice(1);
+      }
+      if (allSum === 0) {
+        this.currentClient.balance -= allMoneyToClient;
+        return result;
+      } 
+      else throw new Error('Ошибка');
+    }
+    
+  }
+
+ }
 
 module.exports = { createClient, createBank, createBankomat };
