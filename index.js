@@ -121,7 +121,7 @@ function createBank(bankName, clients = []) {
 
         addClient: function (client) {
             if (!isClient(client)) {
-                throw new Error('Некорректно переданы данные данные')
+                throw new Error('Некорректные данные')
             }
             
             const isClients = this.clients.find(el => el.name === client.name);
@@ -136,7 +136,7 @@ function createBank(bankName, clients = []) {
         removeClient: function (client) {
 
             if (!isClient(client)) {
-                throw new Error('Некорректные переданы данные');
+                throw new Error('Некорректные данные');
             }
             if (!this.clients.includes(client)) {
                 throw new Error('Клиента нет в списке');
@@ -160,7 +160,7 @@ function createBankomat(bankNotesRepository, bank) {
 
         setClient: function (client) {
             if (!isClient(client)) {
-                throw new Error('Некорректные переданы данные');
+                throw new Error('Некорректные данные');
             }
             const clientIsBank = this.bank.clients.find(el => el.name === client.name);
             if (clientIsBank === undefined) {
