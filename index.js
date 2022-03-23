@@ -52,8 +52,17 @@ function createBank(bankName, clients= []) {
             bankName,
             clients,
 
+            isValidClient(client) {
+                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
+                    && typeof client.name === "string" && typeof client.balance === "number")
+            },
+
+            findClient(client) {
+                return this.clients.find(elem => elem.name === client.name)
+            },
+
             addClient(client) {
-                if (!this.clients.find(elem => elem.name === client.name) && this.isValidClient(client)) {
+                if (!this.findClient(client) && this.isValidClient(client)) {
                     clients.push(client);
                     return true
                 } else throw new Error("Клиент не найден")
@@ -62,17 +71,12 @@ function createBank(bankName, clients= []) {
             removeClient(client) {
                 if (this.isValidClient(client)) {
                     const newArray = this.clients.filter(elem => elem.name !== client.name);
-                    if (JSON.stringify(this.clients) !== JSON.stringify(newArray)) {
+                    if (this.clients.length !== newArray.length) {
                         this.clients = newArray;
                         return true
                     }
                 } else throw new Error("Клиент не удален")
             },
-
-            isValidClient(client) {
-                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
-                && typeof client.name === "string" && typeof client.balance === "number")
-            }
         }
     } else throw new Error("Ошибка создания банка");
 }
@@ -91,22 +95,32 @@ function createBankomat(bankNotesRepository, bank) {
             notesRepository: bankNotesRepository,
             currentClient: undefined,
 
+            isValidClient(client) {
+                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
+                    && typeof client.name === "string" && typeof client.balance === "number")
+            },
+
+            findClient(client) {
+                return this.bank.clients.find(elem => elem.name === client.name)
+            },
+
             setClient(client) {
-                if (this.currentClient === undefined && this.bank.clients.find(elem => elem.name === client.name) && this.isValidClient(client)) {
+                if (this.currentClient === undefined && this.isValidClient(client)
+                    && this.findClient(client)) {
                     this.currentClient = client;
                     return true
                 } else throw new Error("Клиент не установлен")
             },
 
             removeClient() {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
+                if (this.currentClient !== undefined && this.findClient(this.currentClient)) {
                     this.currentClient = undefined;
                     return true;
                 } else throw new Error("Клиент не удален")
             },
 
             addMoney(...banknotes) {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
+                if (this.currentClient !== undefined && this.findClient(this.currentClient)) {
                     banknotes.forEach(banknote => {
                         for (let i in banknote) {
                             this.notesRepository[i] += banknote[i];
@@ -118,11 +132,13 @@ function createBankomat(bankNotesRepository, bank) {
             },
 
             giveMoney(sum) {
-                if (this.currentClient !== undefined && this.bank.clients.find(elem => elem.name === this.currentClient.name)) {
-                    if (sum > this.currentClient.balance)
+                if (this.currentClient !== undefined && this.findClient(this.currentClient)) {
+                    if (sum > this.currentClient.balance) {
                         throw new Error("Привышен лимит выдачи")
-                    if (sum % 10 !== 0)
+                    }
+                    if (sum % 10 !== 0) {
                         throw new Error("Сумма не кратна 10")
+                    }
 
                     const givenMoney = {
                         5000: 0,
@@ -135,11 +151,12 @@ function createBankomat(bankNotesRepository, bank) {
                         10: 0
                     }
 
-                    let sortedBankNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
+                    const sortedBankNotes = Object.entries(this.notesRepository).sort((a, b) => b[0] - a[0]);
                     let currentSum = sum;
                     for (let bankNote of sortedBankNotes) {
                         if (bankNote[0] <= currentSum) {
-                            while (currentSum >= bankNote[0] && this.notesRepository[bankNote[0]] !== 0 && currentSum !== 0) {
+                            while (currentSum >= bankNote[0] && currentSum !== 0
+                            && this.notesRepository[bankNote[0]] !== 0) {
                                 currentSum -= bankNote[0];
                                 this.notesRepository[bankNote[0]] -= 1;
                                 givenMoney[bankNote[0]] += 1
@@ -152,13 +169,8 @@ function createBankomat(bankNotesRepository, bank) {
                     } else throw new Error("Не хватает купюр");
                 } else throw new Error("Клиент не найден");
             },
-
-            isValidClient(client) {
-                return (client !== undefined && client.hasOwnProperty("name") && client.hasOwnProperty("balance")
-                    && typeof client.name === "string" && typeof client.balance === "number")
-            }
         }
-    } else throw new Error("Невалиднын данные банка");
+    } else throw new Error("Невалидные данные банка");
 }
 
 module.exports = { createClient, createBank, createBankomat };
