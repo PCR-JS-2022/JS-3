@@ -123,9 +123,10 @@ function createBank(bankName, clients = []) {
             if (!isClient(client)) {
                 throw new Error('Некорректно переданы данные данные')
             }
-            const isClient = this.clients.find(el => el.name === client.name);
+            
+            const isClients = this.clients.find(el => el.name === client.name);
 
-            if (isClient !== undefined) {
+            if (isClients !== undefined) {
                 throw new Error('Клиент уже в списке');
             }
             this.clients.push(client);
