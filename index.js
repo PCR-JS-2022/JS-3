@@ -76,7 +76,7 @@ function createBank(bankName, clients = []) {
             if (!validateClient(client)) {
                 throw new Error("Неверные данные")
             }
-            if (bank.clients.some((x) => x.name == client.name))
+            if (this.clients.some((x) => x.name == client.name))
                 throw new Error("Клиента уже существует в массиве")
             this.clients.push(client)
             return true
@@ -190,3 +190,22 @@ module.exports = {
 };
 
 
+
+// const clients = Array.from({ length: 10 }, (_, index) =>
+//     createClient(`name ${index}`, 100 + index)
+// );
+// const bank = createBank("Bibici", clients);
+// // const notesRepository = {
+// //     5000: 2,
+// //     2000: 5,
+// //     1000: 77,
+// //     500: 3,
+// //     200: 2,
+// //     100: 2,
+// //     50: 1,
+// //     10: 6,
+// // };
+// // const bankomat = createBankomat(notesRepository, bank);
+// const client = createClient("name", 200)
+// bank.addClient(client)
+// console.log(bank)
