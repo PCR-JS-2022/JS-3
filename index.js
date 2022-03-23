@@ -116,7 +116,7 @@ function createBankomat(notesRepository, bank) {
 			let temp = money;
 			const banknotes = [5000, 2000, 1000, 500, 200, 100, 50, 10];
 			const result = banknotes.reduce((result, banknote) => {
-				let bbanknotes = Math.floor(temp / banknote);
+				let requiredBanknotes = Math.floor(temp / banknote);
 				const stockBanknotes = this.notesRepository[banknote];
 				if (requiredBanknotes === 0) {
 					return result;
