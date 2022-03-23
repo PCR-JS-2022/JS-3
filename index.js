@@ -74,7 +74,7 @@ function createBank(bankName, clients = []) {
         clients,
         addClient(client) {
             checkClientInBank(this, client)
-            clients.push(client)
+            this.clients.push(client)
             return true
         },
         removeClient(client) {
