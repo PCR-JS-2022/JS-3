@@ -73,7 +73,11 @@ function createBank(bankName, clients = []) {
         bankName,
         clients,
         addClient(client) {
-            checkClientInBank(this, client)
+            if (!validateClient(client)) {
+                throw new Error("Неверные данные")
+            }
+            if (bank.clients.some((x) => x.name == client.name))
+                throw new Error("Клиента уже существует в массиве")
             this.clients.push(client)
             return true
         },
@@ -184,3 +188,5 @@ module.exports = {
     createBank,
     createBankomat 
 };
+
+
