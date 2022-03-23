@@ -180,7 +180,7 @@ function createBankomat(notesRepository, bank) {
             }
 
             if (sum_give != 0) {
-                throw new Error("Невозможно выдать заданную сумму")
+                throw new Error("Невозможно выдать заданную сумму", sum_give)
             }
             this.currentClient.balance -= sum
             return result
