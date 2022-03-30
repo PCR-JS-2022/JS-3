@@ -33,7 +33,6 @@
  * @param {number} balance Баланс клиента
  * @returns {Client} Объект клиента
  */
-function createClient(name, balance) { }
 function createClient(name, balance = 0) {
     if (isValideClientData(name, balance))
         return { name, balance };
