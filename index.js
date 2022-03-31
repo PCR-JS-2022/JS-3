@@ -4,7 +4,7 @@
  * @property {string} name
  * @property {number} balance
  */
-
+ 
 /**
  * @typedef Bank
  * @type {object}
@@ -55,7 +55,7 @@ function isValideClientData(name, balance) {
  */
 function isValideClient(client) {
     return typeof client != 'object' ||
-        !client.hasOwnProperty('name') || typeof client.name != 'string' || !client.name ||
+        typeof client.name != 'string' || !client.name ||
         !client.hasOwnProperty('balance') || typeof client.balance != 'number';
 }
 
@@ -97,7 +97,7 @@ function createBank(bankName, clients = []) {
  * @param {Bank} bank Объект банка
  * @returns {Bankomat} Объект банкомата
  */
-function CheckBank(bank) {
+function checkBank(bank) {
     return typeof bank === "object" && typeof bank.bankName === "string" &&
         Array.isArray(bank.clients) && typeof bank.addClient === "function" &&
         typeof bank.removeClient === "function"
@@ -105,7 +105,7 @@ function CheckBank(bank) {
 
 function createBankomat(bankNotesRepository, bank) {
 
-    if (!CheckBank(bank) || typeof bankNotesRepository !== "object")
+    if (!checkBank(bank) || typeof bankNotesRepository !== "object")
         throw new Error('Error: Invalid bankomat arguments');
 
     const bankomat = {
