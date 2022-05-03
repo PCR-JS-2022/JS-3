@@ -78,12 +78,7 @@ function createBank(bankName, clients = []) {
         if (!clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
-
-        clients = clients.filter(i => {
-            if (i !== client) {
-                return i
-            }
-        })
+        clients.splice(clients.indexOf(client), 1)
         return true
     }
 
