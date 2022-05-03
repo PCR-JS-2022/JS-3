@@ -35,8 +35,7 @@
  */
 function createClient(name, balance = 0) {
     if (typeof name !== "string" || typeof balance !== "number") {
-        name = ""
-        balance = 0
+        return Error("Введены некоректные данные")
     }
     return {
         name: name,
