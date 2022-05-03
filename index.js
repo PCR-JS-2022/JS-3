@@ -56,6 +56,10 @@ function createBank(bankName, clients = []) {
     }
 
     function addClient(client) {
+        if (typeof client === "undefined") {
+            throw Error("Введены некоректные данные")
+        }
+
         createClient(client.name, client.balance)
 
         if (clients.includes(client)) {
@@ -66,6 +70,9 @@ function createBank(bankName, clients = []) {
     }
 
     function removeClient(client) {
+        if (typeof client === "undefined") {
+            throw Error("Введены некоректные данные")
+        }
         createClient(client.name, client.balance)
 
         if (!clients.includes(client)) {
