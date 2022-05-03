@@ -51,6 +51,10 @@ function createClient(name, balance = 0) {
  * @returns {Bank} Объект банка
  */
 function createBank(bankName, clients = []) {
+    if (typeof bankName !== "string" || !Array.isArray(clients)) {
+        throw Error("Введены некоректные данные")
+    }
+
     function addClient(client) {
         if (typeof client !== "object") {
             throw TypeError("Ожидается тип object")
@@ -90,7 +94,7 @@ function createBank(bankName, clients = []) {
  */
 function createBankomat(bankNotesRepository, bank) {
     if (typeof bankNotesRepository !== "object" || typeof bank !== "object") {
-        throw Error("")
+        throw Error("Введены некоректные данные")
     }
 
     let currentClient = undefined
