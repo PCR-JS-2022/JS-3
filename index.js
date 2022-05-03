@@ -56,9 +56,8 @@ function createBank(bankName, clients = []) {
     }
 
     function addClient(client) {
-        if (typeof client !== "object") {
-            throw TypeError("Ожидается тип object")
-        }
+        createClient(client.name, client.balance)
+        
         if (clients.includes(client)) {
             throw Error("Данный клиент уже есть в списке клиентов банка")
         }
@@ -67,9 +66,8 @@ function createBank(bankName, clients = []) {
     }
 
     function removeClient(client) {
-        if (typeof client !== "object") {
-            throw TypeError("Ожидается тип object")
-        }
+        createClient(client.name, client.balance)
+
         if (!clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
@@ -93,6 +91,8 @@ function createBank(bankName, clients = []) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
+    createBank(bank.name, bank.clients)
+
     if (typeof bankNotesRepository !== "object" || typeof bank !== "object") {
         throw Error("Введены некоректные данные")
     }
@@ -100,6 +100,8 @@ function createBankomat(bankNotesRepository, bank) {
     let currentClient = undefined
 
     function setClient(client) {
+        createClient(client.name, client.balance)
+        
         if (!bank.clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
@@ -186,14 +188,3 @@ function createBankomat(bankNotesRepository, bank) {
 }
 
 module.exports = { createClient, createBank, createBankomat };
-
-const greenBankNotesRepository = {
-    5000: 2,
-    2000: 3,
-    1000: 13,
-    500: 20,
-    200: 10,
-    100: 5,
-    50: 2,
-    10: 5,
-  };
