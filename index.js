@@ -68,11 +68,16 @@ function createBank(bankName, clients = []) {
     function removeClient(client) {
         createClient(client.name, client.balance)
 
-        if (clients.indexOf(client) !== -1) {
-            clients.splice(clients.indexOf(client), 1)
-            return true
+        if (!clients.includes(client)) {
+            throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
-        throw Error("Данного клиента ещё нет в списке клиентов банка")
+
+        clients = clients.filter(i => {
+            if (i !== client) {
+                return i
+            }
+        })
+        return true
     }
 
     return {
