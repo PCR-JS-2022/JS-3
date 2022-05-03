@@ -65,7 +65,7 @@ function createBank(bankName, clients = []) {
         if (clients.includes(client)) {
             throw Error("Данный клиент уже есть в списке клиентов банка")
         }
-        clients.push(client)
+        this.clients.push(client)
         return true
     }
 
@@ -78,7 +78,7 @@ function createBank(bankName, clients = []) {
         if (!clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
-        clients.splice(clients.indexOf(client), 1)
+        this.clients.splice(clients.indexOf(client), 1)
         return true
     }
 
@@ -115,7 +115,7 @@ function createBankomat(bankNotesRepository, bank) {
         if (currentClient !== undefined) {
             throw Error("Банкомат занят")
         }
-        currentClient = client
+        this.currentClient = client
         return true
     }
 
@@ -123,7 +123,7 @@ function createBankomat(bankNotesRepository, bank) {
         if (currentClient == undefined) {
             throw Error("Банкомат и так пуст")
         }
-        currentClient = undefined
+        this.currentClient = undefined
         return true
     }
 
