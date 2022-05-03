@@ -35,7 +35,7 @@
  */
 function createClient(name, balance = 0) {
     if (typeof name !== "string" || typeof balance !== "number") {
-        return Error("Введены некоректные данные")
+        throw Error("Введены некоректные данные")
     }
     return {
         name: name,
@@ -53,10 +53,10 @@ function createClient(name, balance = 0) {
 function createBank(bankName, clients = []) {
     function addClient(client) {
         if (typeof client !== "object") {
-            return TypeError("Ожидается тип object")
+            throw TypeError("Ожидается тип object")
         }
         if (clients.includes(client)) {
-            return Error("Данный клиент уже есть в списке клиентов банка")
+            throw Error("Данный клиент уже есть в списке клиентов банка")
         }
         clients.push(client)
         return true
@@ -64,10 +64,10 @@ function createBank(bankName, clients = []) {
 
     function removeClient(client) {
         if (typeof client !== "object") {
-            return TypeError("Ожидается тип object")
+            throw TypeError("Ожидается тип object")
         }
         if (!clients.includes(client)) {
-            return Error("Данного клиента ещё нет в списке клиентов банка")
+            throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
         clients.splice(clients.indexOf(client), 1)
         return true
@@ -90,17 +90,17 @@ function createBank(bankName, clients = []) {
  */
 function createBankomat(bankNotesRepository, bank) {
     if (typeof bankNotesRepository !== "object" || typeof bank !== "object") {
-        console.log(Error(""))
+        throw Error("")
     }
 
     let currentClient = undefined
 
     function setClient(client) {
         if (!bank.clients.includes(client)) {
-            return Error("Данного клиента ещё нет в списке клиентов банка")
+            throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
         if (currentClient !== undefined) {
-            return Error("Банкомат занят")
+            throw Error("Банкомат занят")
         }
         currentClient = client
         return true
@@ -108,15 +108,15 @@ function createBankomat(bankNotesRepository, bank) {
 
     function removeClient() {
         if (currentClient == undefined) {
-            return Error("Банкомат и так пуст")
+            throw Error("Банкомат и так пуст")
         }
         currentClient = undefined
         return true
     }
 
     function addMoney(...bankNotes) {
-        if (typeof bankNotes !== "object" || typeof currentClient == undefined) {
-            return Error("Нет текущего клиента")
+        if (typeof bankNotes !== "object" || typeof currentClient == "undefined") {
+            throw Error("Нет текущего клиента")
         }
 
         nextAddMoney(...bankNotes)
@@ -140,16 +140,16 @@ function createBankomat(bankNotesRepository, bank) {
 
     function giveMoney(money) {
         if (typeof currentClient == "undefined") {
-            return Error("Нет текущего клиента")
+            throw Error("Нет текущего клиента")
         }
         if (money <= 0) {
-            return Error("Введите сумму больше 0")
+            throw Error("Введите сумму больше 0")
         }
         if (money > currentClient.balance) {
-            return Error("Недостаточно средств на балансе")
+            throw Error("Недостаточно средств на балансе")
         }
         if (money % 10 != 0) {
-            return Error("Введите сумму кратную 10")
+            throw Error("Введите сумму кратную 10")
         }
         let bankNotes = {}
         Object.keys(bankNotesRepository)
@@ -165,7 +165,7 @@ function createBankomat(bankNotesRepository, bank) {
             }
         })
         if (money != 0) {
-            return Error("В банкомате не хватает купюр")
+            throw Error("В банкомате не хватает купюр")
         }
         return bankNotes
     }
@@ -182,3 +182,14 @@ function createBankomat(bankNotesRepository, bank) {
 }
 
 module.exports = { createClient, createBank, createBankomat };
+
+const greenBankNotesRepository = {
+    5000: 2,
+    2000: 3,
+    1000: 13,
+    500: 20,
+    200: 10,
+    100: 5,
+    50: 2,
+    10: 5,
+  };
