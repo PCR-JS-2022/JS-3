@@ -57,7 +57,7 @@ function createBank(bankName, clients = []) {
 
     function addClient(client) {
         createClient(client.name, client.balance)
-        
+
         if (clients.includes(client)) {
             throw Error("Данный клиент уже есть в списке клиентов банка")
         }
@@ -68,11 +68,11 @@ function createBank(bankName, clients = []) {
     function removeClient(client) {
         createClient(client.name, client.balance)
 
-        if (!clients.includes(client)) {
-            throw Error("Данного клиента ещё нет в списке клиентов банка")
+        if (clients.indexOf(client) !== -1) {
+            clients.splice(clients.indexOf(client), 1)
+            return true
         }
-        clients.splice(clients.indexOf(client), 1)
-        return true
+        throw Error("Данного клиента ещё нет в списке клиентов банка")
     }
 
     return {
@@ -91,7 +91,7 @@ function createBank(bankName, clients = []) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
-    createBank(bank.name, bank.clients)
+    createBank(bank.bankName, bank.clients)
 
     if (typeof bankNotesRepository !== "object" || typeof bank !== "object") {
         throw Error("Введены некоректные данные")
@@ -101,7 +101,7 @@ function createBankomat(bankNotesRepository, bank) {
 
     function setClient(client) {
         createClient(client.name, client.balance)
-        
+
         if (!bank.clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
@@ -159,17 +159,17 @@ function createBankomat(bankNotesRepository, bank) {
         }
         let bankNotes = {}
         Object.keys(bankNotesRepository)
-        .reverse()
-        .forEach(bankKey => {
-            while (money - bankKey >= 0 && bankNotesRepository[bankKey] > 0) {
-                if (bankNotes[bankKey] == undefined) {
-                    bankNotes[bankKey] = 0
+            .reverse()
+            .forEach(bankKey => {
+                while (money - bankKey >= 0 && bankNotesRepository[bankKey] > 0) {
+                    if (bankNotes[bankKey] == undefined) {
+                        bankNotes[bankKey] = 0
+                    }
+                    bankNotes[bankKey] += 1
+                    bankNotesRepository[bankKey] -= 1
+                    money -= bankKey
                 }
-                bankNotes[bankKey] += 1
-                bankNotesRepository[bankKey] -= 1
-                money -= bankKey
-            }
-        })
+            })
         if (money != 0) {
             throw Error("В банкомате не хватает купюр")
         }
