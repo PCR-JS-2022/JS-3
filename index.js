@@ -78,7 +78,11 @@ function createBank(bankName, clients = []) {
         if (!clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
-        this.clients.splice(clients.indexOf(client), 1)
+        this.clients = this.clients.filter(i => {
+            if (i !== client) {
+                return i
+            }
+        })
         return true
     }
 
@@ -112,7 +116,7 @@ function createBankomat(bankNotesRepository, bank) {
         if (!bank.clients.includes(client)) {
             throw Error("Данного клиента ещё нет в списке клиентов банка")
         }
-        if (currentClient !== undefined) {
+        if (this.currentClient !== undefined) {
             throw Error("Банкомат занят")
         }
         this.currentClient = client
@@ -120,7 +124,7 @@ function createBankomat(bankNotesRepository, bank) {
     }
 
     function removeClient() {
-        if (currentClient == undefined) {
+        if (this.currentClient == undefined) {
             throw Error("Банкомат и так пуст")
         }
         this.currentClient = undefined
@@ -128,10 +132,11 @@ function createBankomat(bankNotesRepository, bank) {
     }
 
     function addMoney(...bankNotes) {
-        if (typeof bankNotes !== "object" || typeof currentClient == "undefined") {
+        if (typeof bankNotes !== "object" || typeof this.currentClient == "undefined") {
             throw Error("Нет текущего клиента")
         }
-
+        currentClient = this.currentClient
+        
         nextAddMoney(...bankNotes)
 
         function nextAddMoney(...bankNotes) {
@@ -152,13 +157,13 @@ function createBankomat(bankNotesRepository, bank) {
     }
 
     function giveMoney(money) {
-        if (typeof currentClient == "undefined") {
+        if (typeof this.currentClient == "undefined") {
             throw Error("Нет текущего клиента")
         }
         if (money <= 0) {
             throw Error("Введите сумму больше 0")
         }
-        if (money > currentClient.balance) {
+        if (money > this.currentClient.balance) {
             throw Error("Недостаточно средств на балансе")
         }
         if (money % 10 != 0) {
@@ -175,6 +180,7 @@ function createBankomat(bankNotesRepository, bank) {
                     bankNotes[bankKey] += 1
                     bankNotesRepository[bankKey] -= 1
                     money -= bankKey
+                    this.currentClient.balance -= bankKey
                 }
             })
         if (money != 0) {
