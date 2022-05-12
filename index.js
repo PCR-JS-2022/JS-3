@@ -64,8 +64,8 @@ function createBank(bankName, clients = []) {
             return true;
         },
         removeClient(client) {
-            if (clients.find((bc) => bc === client)) {
-                this.clients = clients.filter((bc) => bc !== client)
+            if (this.clients.find((bc) => bc === client)) {
+                this.clients = this.clients.filter((bc) => bc !== client)
                 return true;
             }
 
