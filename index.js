@@ -67,6 +67,8 @@ function createBank(bankName, clients = []) {
             if (this.clients.find((bc) => bc === client)) {
                 this.clients = this.clients.filter((bc) => bc !== client)
                 return true;
+            } else {
+                throw new Error('Не удалось удалить клиента из банка')
             }
 
             return false;
