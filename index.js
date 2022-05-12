@@ -38,6 +38,7 @@ function createClient(name, balance = 0) {
         throw new Error(`Неверные входные данные createClient ${name} : ${balance}`);
     }
 
+
     return {name, balance};
 }
 
@@ -53,15 +54,13 @@ function createBank(bankName, clients = []) {
         throw new Error('Неверные входные данные bankName');
     }
 
-    function addClient(name, balance) {
-        if (clients.find((client) => client.name === name)) {
-            return false;
-        }
-
-        clients.push(createClient(name, balance));
-
+    function addClient(client) {
+        if (this.clients.find(bc => bc === client))
+            throw new Error('Не удалось добавить клиента в банк');
+        this.clients.push(client);
         return true;
     }
+
 
     function removeClient(name) {
         if (clients.find((client) => client.name === name)) {
@@ -94,7 +93,7 @@ function createBankomat(bankNotesRepository, bank) {
         notesRepository: bankNotesRepository,
         currentClient: currentClient,
         setClient(client) {
-            if (client === undefined){
+            if (client === undefined) {
                 throw Error("Такого клиента нету");
             }
 
@@ -138,7 +137,7 @@ function createBankomat(bankNotesRepository, bank) {
             }
 
             const res = {}
-            for (let i of Object.keys(this.notesRepository).sort((a,b) => -a+b)) {
+            for (let i of Object.keys(this.notesRepository).sort((a, b) => -a + b)) {
                 if (money > +i) {
                     const count = Math.min(Math.floor(money / +i), this.notesRepository[i]);
                     this.notesRepository[i] -= count;
