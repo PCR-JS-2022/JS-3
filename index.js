@@ -120,40 +120,46 @@ function createBankomat(bankNotesRepository, bank) {
                 throw new Error('Текущий пользователь нету');
             }
 
-            for (let elem of money) {
 
-                const [[nominal, count]] = Object.entries(elem);
-                this.currentClient.balance += (+nominal) * (count);
-                if (this.notesRepository[nominal]) {
-                    this.notesRepository[nominal] += count;
-                } else {
-                    this.notesRepository[nominal] = count;
+
+            for (let moneyObjs of money) {
+                for (let key in moneyObjs) {
+                    const nominal = key;
+                    const count = moneyObjs[key];
+                    this.currentClient.balance = this.currentClient.balance + ((+nominal) * (count));
+                    if (this.notesRepository[nominal]) {
+                        this.notesRepository[nominal] += count;
+                    } else {
+                        this.notesRepository[nominal] = count;
+                    }
                 }
             }
+
 
             return this.addMoney.bind(this);
         },
         giveMoney(money) {
-            const moneyCopy = money;
+            let moneyCopy = money;
             if (!this.currentClient) {
                 throw new Error('Текущий пользователь нету');
             }
 
-            if (money > this.currentClient.balance) {
+            if (moneyCopy > this.currentClient.balance) {
                 throw new Error('Бабок нету, грустна');
             }
 
-            const res = {}
+            const res = {};
+
             for (let i of Object.keys(this.notesRepository).sort((a, b) => -a + b)) {
-                if (money > +i) {
-                    const count = Math.min(Math.floor(money / +i), this.notesRepository[i]);
+                if (moneyCopy > +i) {
+                    const count = Math.min(Math.floor(moneyCopy / +i), this.notesRepository[i]);
                     this.notesRepository[i] -= count;
-                    money -= count * +i;
+                    moneyCopy -= count * +i;
                     res[i] = count;
                 }
             }
 
-            this.currentClient.balance -= moneyCopy;
+            this.currentClient.balance -= money;
             return res;
         },
     }
