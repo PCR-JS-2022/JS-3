@@ -55,7 +55,7 @@ function createBank(bankName, clients = []) {
     }
 
     function addClient(client) {
-        if (this.clients.find(bc => bc === client))
+        if (!isTypeOfClient(client) || this.clients.includes(client))
             throw new Error('Не удалось добавить клиента в банк');
         this.clients.push(client);
         return true;
@@ -82,7 +82,7 @@ function createBank(bankName, clients = []) {
  * @returns {Bankomat} Объект банкомата
  */
 function createBankomat(bankNotesRepository, bank) {
-    if (!bank) {
+    if (!bank || !isTypeOfBank(bank)) {
         throw Error("Неверные входные данные createBankomat");
     }
 
@@ -97,9 +97,15 @@ function createBankomat(bankNotesRepository, bank) {
                 throw Error("Такого клиента нету");
             }
 
+            if (!isTypeOfClient(client)){
+                throw Error("Некорректные входные параметры");
+            }
+
             if (!bank.clients.find((bc) => bc.name === client.name)) {
                 throw Error("Такого клиента нету");
             }
+
+
 
             this.currentClient = client;
             return true;
@@ -150,6 +156,17 @@ function createBankomat(bankNotesRepository, bank) {
             return res;
         },
     }
+}
+
+
+function isTypeOfBank(bank) {
+    return typeof bank === 'object' && bank.bankName && bank.clients && bank.addClient && bank.removeClient
+}
+
+function isTypeOfClient(client) {
+    return typeof client === 'object' &&
+        ((client.balance && typeof client.balance === 'number') || client.balance === 0) &&
+        client.name && typeof client.name === 'string'
 }
 
 
