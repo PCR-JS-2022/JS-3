@@ -35,7 +35,7 @@
  */
 function createClient(name, balance = 0) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
-        throw new Error('Неверные входные данные createClient');
+        throw new Error(`Неверные входные данные createClient ${name} : ${balance}`);
     }
 
     return {name, balance};
