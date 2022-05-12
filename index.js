@@ -35,7 +35,7 @@
  */
 function createClient(name, balance = 0) {
     if (typeof name !== 'string' || typeof balance !== 'number') {
-        throw new Error('Неверные входные данные');
+        throw new Error('Неверные входные данные createClient');
     }
 
     return {name, balance};
@@ -50,7 +50,7 @@ function createClient(name, balance = 0) {
  */
 function createBank(bankName, clients = []) {
     if (typeof bankName !== 'string') {
-        throw new Error('Неверные входные данные');
+        throw new Error('Неверные входные данные bankName');
     }
 
     function addClient(name, balance) {
@@ -84,7 +84,7 @@ function createBank(bankName, clients = []) {
  */
 function createBankomat(bankNotesRepository, bank) {
     if (!bank) {
-        throw Error("Неверные входные данные");
+        throw Error("Неверные входные данные createBankomat");
     }
 
     let currentClient = undefined;
