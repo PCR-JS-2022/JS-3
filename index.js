@@ -34,7 +34,7 @@
  * @returns {Client} Объект клиента
  */
 function createClient(name, balance = 0) {
-    if (typeof name !== 'string' || typeof balance !== 'number') {
+    if (typeof name !== 'string' || !name || typeof balance !== 'number') {
         throw new Error(`Неверные входные данные createClient ${name} : ${balance}`);
     }
 
