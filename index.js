@@ -112,7 +112,7 @@ function createBankomat(bankNotesRepository, bank) {
             return true;
         },
         removeClient() {
-            currentClient = undefined;
+            this.currentClient = undefined;
             return true;
         },
         addMoney(...money) {
