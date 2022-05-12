@@ -62,9 +62,9 @@ function createBank(bankName, clients = []) {
     }
 
 
-    function removeClient(name) {
-        if (clients.find((client) => client.name === name)) {
-            clients = clients.filter((client) => client.name === name)
+    function removeClient(client) {
+        if (clients.find((bc) => bc === client)) {
+            clients = clients.filter((bc) => bc === client)
             return true;
         }
 
