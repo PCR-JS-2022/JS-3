@@ -54,24 +54,24 @@ function createBank(bankName, clients = []) {
         throw new Error('Неверные входные данные bankName');
     }
 
-    function addClient(client) {
-        if (!isTypeOfClient(client) || this.clients.includes(client))
-            throw new Error('Не удалось добавить клиента в банк');
-        this.clients.push(client);
-        return true;
-    }
 
-
-    function removeClient(client) {
-        if (clients.find((bc) => bc === client)) {
-            this.clients = clients.filter((bc) => bc !== client)
+    return {
+        bankName, clients,
+        addClient(client) {
+            if (!isTypeOfClient(client) || this.clients.includes(client))
+                throw new Error('Не удалось добавить клиента в банк');
+            this.clients.push(client);
             return true;
+        },
+        removeClient(client) {
+            if (clients.find((bc) => bc === client)) {
+                this.clients = clients.filter((bc) => bc !== client)
+                return true;
+            }
+
+            return false;
         }
-
-        return false;
-    }
-
-    return {bankName, clients, addClient, removeClient};
+    };
 }
 
 /**
@@ -97,14 +97,13 @@ function createBankomat(bankNotesRepository, bank) {
                 throw Error("Такого клиента нету");
             }
 
-            if (!isTypeOfClient(client)){
+            if (!isTypeOfClient(client)) {
                 throw Error("Некорректные входные параметры");
             }
 
             if (!bank.clients.find((bc) => bc.name === client.name)) {
                 throw Error("Такого клиента нету");
             }
-
 
 
             this.currentClient = client;
